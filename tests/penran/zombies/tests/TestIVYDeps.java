@@ -3,6 +3,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TestIVYDeps {
+  // are slf4j & logback resolved correctly?
   private static final Logger log = LoggerFactory.getLogger(TestIVYDeps.class);
 
   public static void main(String[] args) {

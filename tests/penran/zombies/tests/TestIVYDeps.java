@@ -1,0 +1,11 @@
+package penran.zombies.tests;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class TestIVYDeps {
+  private static final Logger log = LoggerFactory.getLogger(TestIVYDeps.class);
+
+  public static void main(String[] args) {
+    log.info("test");
+  }
+}

@@ -8,7 +8,7 @@ import java.util.List;
  * 
  * @author Guillaume Alvarez
  */
-public final class Place {
+public final class Place implements GameObject {
 
 	public final String name;
 
@@ -49,6 +49,12 @@ public final class Place {
 			zombies = Math.max(100.0, zombies + percent);
 		else if (percent < 0)
 			zombies = Math.min(0.0, zombies + percent);
+
+	}
+
+	@Override
+	public void tick() {
+		// TODO Auto-generated method stub
 
 	}
 

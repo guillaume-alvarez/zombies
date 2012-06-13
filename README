@@ -5,6 +5,7 @@ Check https://trello.com/board/zombies/4f9abb189bb81a7e3bc16e8d
 Will use:
  * slf4j for logging
  * JavaFX for graphics
- * RMI or another transport layer for the server (on second tought, probably
-   not RMI, maybe smth build with Mina & MessagePacker or a Jetty & JSON web
-   server to allow other clients)
+ * some exising library for the server part when it will be time to build it:
+ ** smth build with Mina & MessagePacker/BSON to learn those technologies
+ ** Jetty & JSON web to ease testing & allow further type of clients
+ ** a dead simple custom ascii protocol a-là ftp

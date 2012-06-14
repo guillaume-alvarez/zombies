@@ -10,4 +10,3 @@ Will use:
  ** Jetty & JSON web to ease testing & allow further type of clients,
  ** a dead simple custom ascii protocol a-là ftp.
 
-No pert diagram requried for now.

@@ -1,4 +1,4 @@
-package ensemble.samples.graphics;
+package penran.zombies.ui;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

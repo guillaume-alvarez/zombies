@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="src" path="core"/>
 	<classpathentry kind="src" path="ui"/>
+	<classpathentry kind="src" path="tools"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=zombies&amp;ivyXmlPath=ivy.xml&amp;confs=*"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>

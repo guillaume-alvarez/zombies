@@ -1,13 +1,14 @@
 package penran.zombies.ui;
 
-import static penran.zombies.ui.CSVParser.*;
+import static penran.utils.CSVParser.list;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import penran.zombies.ui.CSVParser.Builder;
-import penran.zombies.ui.CSVParser.Column;
+import penran.utils.*;
+import penran.utils.CSVParser.Builder;
+import penran.utils.CSVParser.Column;
 
 /**
  * Temporary representation of a level to use for initial dev of the main view.
@@ -83,9 +84,9 @@ public class Level {
     }
 
     @Builder
-    public Road make(@Column(value = "name") String name,
-                     @Column(value = "endpoint1") String endPoint1,
-                     @Column(value = "endpoint2") String endPoint2) {
+    public Road make(@Column("name") String name,
+                     @Column("endpoint1") String endPoint1,
+                     @Column("endpoint2") String endPoint2) {
       return new Road(name, Arrays.asList(towns.get(endPoint1),
                                           towns.get(endPoint2)));
     }
@@ -98,18 +99,25 @@ public class Level {
   public Level(Collection<Road> roads) {
     this.roads = Collections.unmodifiableSet(new HashSet<>(roads));
     Set<Town> alls = new HashSet<>();
-    for (Road r : roads)
-      for (Town t : r.endPoints)
+    for (Road r : roads) {
+      for (Town t : r.endPoints) {
         alls.add(t);
+      }
+    }
     towns = Collections.unmodifiableSet(alls);
   }
 
   public static Level load(String separator, File towns, File roads) throws IOException {
 
     try (Scanner sct = new Scanner(towns); Scanner scr = new Scanner(roads)) {
-      Map<String, Town> t = map(builder(Town.class), "name", separator, sct);
-      return new Level(list(CSVParser.<Road> builder(new RoadBuilder(t)),
-                          separator, scr));
+      List<Town> t = list(CSVParser.<Town> builder(Town.class), separator, sct);
+      Map<String, Town> m = Util.asMap(t, Town.class.getDeclaredField("name"));
+      return new Level(list(CSVParser.<Road> builder(new RoadBuilder(m)),
+                            separator,
+                            scr));
+    }
+    catch (Exception e) {
+      throw new IOException("Cannot load data: " + e, e);
     }
   }
 }

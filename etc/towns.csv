@@ -1,6 +1,8 @@
-name, longitude, latitude, size
-Rennes,200,200,50
-St Grégoire,170,170,12
-Cesson-Sévigné,230,230,14
-St Brieuc,0,150,35
-Dinan,70,170,10
+name, longitude, latitude, size,control
+Rennes,200,200,37,
+St Grégoire,170,170,12,
+Cesson-Sévigné,230,210,14,
+St Brieuc,0,150,25,
+Dinan,70,190,10,
+CTRL1,230,190,,yes
+CTRL2,210,170,,yes

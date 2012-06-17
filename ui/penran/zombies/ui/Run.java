@@ -16,7 +16,7 @@ public class Run extends Application {
     stage.setScene(new Scene(new Land(Level.load(',',
                                                  new File("etc/towns.csv"),
                                                  new File("etc/roads.csv")),
-                                      512, 512, 20, 20)));
+                                      800, 350, 20, 20)));
     stage.show();
   }
 

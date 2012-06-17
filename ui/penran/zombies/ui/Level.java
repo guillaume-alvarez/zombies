@@ -17,6 +17,15 @@ import penran.utils.CSVParser.Column;
  */
 public class Level {
 
+  public static class ToList implements penran.utils.CSVParser.Converter {
+    @Override
+    public Object convert(String column, Class<?> type, boolean required, String value) throws Exception {
+      if (value.isEmpty())
+        return Collections.emptyList();
+      return Arrays.asList(value.split("\\s+"));
+    }
+  }
+
   public static class Town {
     public final double latitude;
 
@@ -26,11 +35,14 @@ public class Level {
 
     public final String name;
 
-    private Town(String name, double latitude, double longitude, int size) {
+    public final boolean control;
+
+    private Town(String name, double latitude, double longitude, int size, boolean control) {
       this.name = name;
       this.latitude = latitude;
       this.longitude = longitude;
       this.size = size;
+      this.control = control;
     }
 
     @Override
@@ -43,8 +55,10 @@ public class Level {
     public static Town make(@Column("name") String name,
                             @Column("latitude") double latitude,
                             @Column("longitude") double longitude,
-                            @Column("size") int size) {
-      return new Town(name, latitude, longitude, size);
+                            @Column(value = "size", required = false) Integer size,
+                            @Column(value = "control", required = false) Boolean control) {
+      return new Town(name, latitude, longitude, size == null ? 0 : size,
+                      control == null ? false : control);
     }
   }
 
@@ -55,8 +69,11 @@ public class Level {
     // be useful, and currently consider only 2
     public final List<Town> endPoints;
 
-    private Road(String name, List<Town> endPoints) {
+    public final List<Town> control;
+
+    private Road(String name, List<Town> endPoints, List<Town> control) {
       this.name = name;
+      this.control = control;
       this.endPoints = Collections.unmodifiableList(new ArrayList<>(endPoints));
     }
 
@@ -86,9 +103,15 @@ public class Level {
     @Builder
     public Road make(@Column("name") String name,
                      @Column("endpoint1") String endPoint1,
-                     @Column("endpoint2") String endPoint2) {
-      return new Road(name, Arrays.asList(towns.get(endPoint1),
-                                          towns.get(endPoint2)));
+                     @Column("endpoint2") String endPoint2,
+                     @Column(value = "control", required = false, converter = ToList.class) List<String> control) {
+      List<Town> ctrl = new ArrayList<>();
+      for (String s : control)
+        ctrl.add(towns.get(s));
+      return new Road(name,
+                      Arrays.asList(towns.get(endPoint1),
+                                    towns.get(endPoint2)),
+                      ctrl);
     }
   }
 

@@ -101,11 +101,12 @@ public class CSVParser {
      *
      * @param column The name of the column.
      * @param type The type of the parameter.
+     * @param required Whether having an empty column is acceptable.
      * @param value The value as extracted from the CSV.
      * @return A value suitable for the builder method.
      * @throws Exception If an error occurs during the conversion.
      */
-    Object convert(String column, Class<?> type, String value) throws Exception;
+    Object convert(String column, Class<?> type, boolean required, String value) throws Exception;
   }
 
   /**
@@ -139,6 +140,7 @@ public class CSVParser {
   }
 
   private static List<String> parseLine(int separator, String line) {
+    line = line.trim();
     List<String> entries = new ArrayList<>();
     int start = 0;
     while (start < line.length()) {
@@ -146,8 +148,13 @@ public class CSVParser {
 
       if (line.codePointAt(start) == separator) {
         entries.add("");
-        start = Character.charCount(separator);
-        continue;
+        start += Character.charCount(separator);
+        if (start < line.length()) {
+          continue;
+        }
+        // ate last separator
+        entries.add("");
+        break;
       }
 
       if (line.charAt(start) == '\'') {
@@ -166,10 +173,18 @@ public class CSVParser {
         start = current;
       }
 
-      if (start < line.length() && line.codePointAt(start) != separator) {
+      if (start < line.length()) {
+        if (line.codePointAt(start) == separator) {
+          start += Character.charCount(separator);
+          if (start < line.length()) {
+            continue;
+          }
+          // ate last separator
+          entries.add("");
+          break;
+        }
         throw new IllegalArgumentException("Data left in column after extractation at " + start + " in " + line);
       }
-      start += Character.charCount(separator);
     }
     return entries;
   }
@@ -236,7 +251,6 @@ public class CSVParser {
     for (int i = 0; i < types.length; i++) {
       String key = null;
       Class<? extends Converter> conv = null;
-      Class<?> type = null;
       boolean required = false;
       for (Annotation a : ans[i]) {
         if (a.annotationType() == Column.class) {
@@ -265,7 +279,7 @@ public class CSVParser {
       public T build(Map<String, Integer> columns, String[] elements) throws Exception {
         for (int i = 0; i < converters.size(); i++) {
           Conv c = converters.get(i);
-          buf[i] = c.converter.convert(c.name, c.type,
+          buf[i] = c.converter.convert(c.name, c.type, c.required,
                                        elements[columns.get(c.name)]);
         }
         try {
@@ -303,7 +317,12 @@ public class CSVParser {
     }
 
     @Override
-    public Object convert(String column, Class<?> type, String value) {
+    public Object convert(String column, Class<?> type, boolean required, String value) {
+      if (value.isEmpty()) {
+        if (required)
+          throw new IllegalArgumentException("Empty column " + column );
+        return null;
+      }
       if (type == String.class) {
         return value;
       }

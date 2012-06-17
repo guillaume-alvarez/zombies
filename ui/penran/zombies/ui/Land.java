@@ -50,10 +50,23 @@ public class Land extends Pane {
 
   private final Rectangle background;
 
-  public Land(Level level, int width, int height, int marginWidth, int marginHeight) {
+  private final Group items;
+
+  private final int marginWidth;
+
+  private final int marginHeight;
+
+  private final Font font;
+
+  public Land(Level level, int width, int height, int marginWidth,
+      int marginHeight) {
+
+    this.marginWidth = marginWidth;
+    this.marginHeight = marginHeight;
+
     setPrefSize(width, height);
 
-    Font font = Font.font("arial", 20);
+    font = Font.font("arial", 20);
     final Text text = new Text(0, 0, "Item: ");
     text.setFill(Color.WHITE);
     text.setFont(font);
@@ -66,7 +79,8 @@ public class Land extends Pane {
         continue;
       double radius = t.size / 2d;
 
-      Circle c = new Circle(t.longitude, t.latitude, radius, Color.web("brown"));
+      int ift = (int) Math.round(255*(t.size - t.infected)/(double) t.size);
+      Circle c = new Circle(t.longitude, t.latitude, radius, Color.rgb(255, ift, ift));
       c.setOnMouseClicked(new EventHandler<Event>() {
         @Override
         public void handle(Event paramT) {
@@ -76,29 +90,29 @@ public class Land extends Pane {
 
       towns.getChildren().add(c);
 
-      Circle bound = new Circle(t.longitude, t.latitude, radius);
+      Circle bound = new Circle(t.longitude, t.latitude, radius + 1);
       bound.setStrokeType(StrokeType.OUTSIDE);
-      bound.setStroke(Color.web("white", 0.8f));
+      bound.setStroke(Color.web("white", 1));
       bound.setStrokeWidth(2f);
       halo.getChildren().add(bound);
     }
     towns.setEffect(new BoxBlur(2, 2, 2));
-    halo.setEffect(new BoxBlur(6, 6, 6));
+    halo.setEffect(new BoxBlur(2, 2, 2));
 
     Group roads = new Group();
     for (final Road r : level.roads) {
       List<Town> ep = r.endPoints;
       List<Town> ct = r.control;
 
-      double[] points = new double[ep.size() * 2  + ct.size() *2];
+      double[] points = new double[ep.size() * 2 + ct.size() * 2];
       points[0] = ep.get(0).longitude;
       points[1] = ep.get(0).latitude;
       for (int i = 0; i < ct.size(); i++) {
-        points[i*2 + 2] = ct.get(i).longitude;
-        points[i*2 + 3] = ct.get(i).latitude;
+        points[i * 2 + 2] = ct.get(i).longitude;
+        points[i * 2 + 3] = ct.get(i).latitude;
       }
-      points[ct.size()*2 + 2] = ep.get(1).longitude;
-      points[ct.size()*2 + 3] = ep.get(1).latitude;
+      points[ct.size() * 2 + 2] = ep.get(1).longitude;
+      points[ct.size() * 2 + 3] = ep.get(1).latitude;
 
       Polyline l = new Polyline(points);
       l.setOnMouseClicked(new EventHandler<Event>() {
@@ -114,20 +128,23 @@ public class Land extends Pane {
       roads.getChildren().add(l);
     }
 
-    Group items = new Group(halo, roads, towns);
-    items.setManaged(false);
-
-    Bounds bounds = items.getBoundsInParent();
-    double scale = Math.min((width - marginWidth) / bounds.getWidth(),
-                            (height - marginHeight - font.getSize()) / bounds.getHeight());
-    items.setScaleX(scale);
-    items.setScaleY(scale);
-
-    items.setTranslateX(-items.getBoundsInParent().getMinX());
-    items.setTranslateY(-items.getBoundsInParent().getMinY() + font.getSize());
-
     background = new Rectangle(0, 0, width, height);
     background.setFill(Color.BLACK);
+    items = new Group(halo, roads, towns);
+    items.setManaged(false);
+
+    background.setHeight(height);
+    background.setWidth(width);
+
+    Bounds bounds = items.getBoundsInParent();
+    double scale = Math.min((width - marginWidth) / bounds.getWidth(), (height
+        - marginHeight - font.getSize())
+        / bounds.getHeight());
+    items.setScaleX(scale);
+    items.setScaleY(scale);
+    items.setTranslateX(-items.getBoundsInParent().getMinX() + marginWidth / 2d - items.getTranslateX());
+    items.setTranslateY(-items.getBoundsInParent().getMinY() + font.getSize()
+        + marginWidth / 2d - items.getTranslateY());
 
     getChildren().add(new Group(background, items, text));
   }

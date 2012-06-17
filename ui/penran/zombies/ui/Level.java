@@ -37,12 +37,15 @@ public class Level {
 
     public final boolean control;
 
-    private Town(String name, double latitude, double longitude, int size, boolean control) {
+    public final int infected;
+
+    private Town(String name, double latitude, double longitude, int size, boolean control, int infected) {
       this.name = name;
       this.latitude = latitude;
       this.longitude = longitude;
       this.size = size;
       this.control = control;
+      this.infected = infected;
     }
 
     @Override
@@ -56,9 +59,14 @@ public class Level {
                             @Column("latitude") double latitude,
                             @Column("longitude") double longitude,
                             @Column(value = "size", required = false) Integer size,
+                            @Column(value = "infected count", required = false) Integer infected,
                             @Column(value = "control", required = false) Boolean control) {
-      return new Town(name, latitude, longitude, size == null ? 0 : size,
-                      control == null ? false : control);
+      return new Town(name,
+                      latitude,
+                      longitude,
+                      size == null ? 0 : size,
+                      control == null ? false : control,
+                      infected == null ? 0 : infected);
     }
   }
 

@@ -1,8 +1,8 @@
-name, longitude, latitude, size,control
-Rennes,200,200,37,
-St Grégoire,170,170,12,
-Cesson-Sévigné,230,210,14,
-St Brieuc,0,150,25,
-Dinan,70,190,10,
-CTRL1,230,190,,yes
-CTRL2,210,170,,yes
+name, longitude, latitude, size,control,infected count
+Rennes,200,200,37,,34
+St Grégoire,170,170,12,,12
+Cesson-Sévigné,230,210,14,,11
+St Brieuc,0,150,25,,0
+Dinan,70,190,17,,5
+CTRL1,230,190,,yes,
+CTRL2,210,170,,yes,

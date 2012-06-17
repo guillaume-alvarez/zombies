@@ -107,7 +107,7 @@ public class Level {
     towns = Collections.unmodifiableSet(alls);
   }
 
-  public static Level load(String separator, File towns, File roads) throws IOException {
+  public static Level load(int separator, File towns, File roads) throws IOException {
 
     try (Scanner sct = new Scanner(towns); Scanner scr = new Scanner(roads)) {
       List<Town> t = list(CSVParser.<Town> builder(Town.class), separator, sct);
@@ -119,5 +119,15 @@ public class Level {
     catch (Exception e) {
       throw new IOException("Cannot load data: " + e, e);
     }
+  }
+
+  @Override
+  public String toString() {
+    String s = "";
+    for (Road r : roads) {
+      s += r.name + ": " + r.endPoints.get(0).name + " -> "
+          + r.endPoints.get(1).name + "\n";
+    }
+    return s;
   }
 }

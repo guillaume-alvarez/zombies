@@ -183,6 +183,14 @@ public class Util {
     };
   }
 
+  /**
+   * Convert a list of element into a map using the parameter field as a key extractor.
+   *
+   * @param values The list of values for the map.
+   * @param keyField The key field used for the mapping.
+   * @return A map containing <pre>{v[keyField] -> v | v : values}</pre>
+   * @throws IllegalArgumentException If an error occurs while using keyField.
+   */
   public static <K, V> Map<K, V> asMap(List<V> values, Field keyField) throws IllegalArgumentException {
     Map<K, V> r = new HashMap<>(values.size());
     for (V v : values) {
@@ -195,5 +203,16 @@ public class Util {
       }
     }
     return r;
+  }
+
+  public static boolean foundAt(CharSequence sequence, CharSequence checked, int offset) {
+    int i = 0;
+    while (i < sequence.length() && i + offset < checked.length()) {
+      if (checked.charAt(i) != sequence.charAt(i)) {
+        return false;
+      }
+      i++;
+    }
+    return i == sequence.length();
   }
 }

@@ -1,7 +1,7 @@
 name, endpoint1, endpoint2,control
-R1, Rennes, St Brieuc,
-R2, Rennes, St Grégoire,
-R3, Rennes, Cesson-Sévigné,
-R4, Cesson-Sévigné, St Grégoire,CTRL1 CTRL2
-R5, Rennes, Dinan,
-R6, St Brieuc, Dinan,
+N12, Rennes, St Brieuc,
+Av. Gal de Gaulle, Rennes, St Grégoire,
+Av. Gal Leclerc, Rennes, Cesson-Sévigné,
+Rocade Nord, Cesson-Sévigné, St Grégoire,CTRL1 CTRL2
+D137, Rennes, Dinan,
+N176, St Brieuc, Dinan,

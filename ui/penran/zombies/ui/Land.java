@@ -84,7 +84,7 @@ public class Land extends Pane {
       c.setOnMouseClicked(new EventHandler<Event>() {
         @Override
         public void handle(Event paramT) {
-          text.setText("Item: " + t.name);
+          text.setText("Item: " + t.name + " infected=" + t.infected);
         }
       });
 

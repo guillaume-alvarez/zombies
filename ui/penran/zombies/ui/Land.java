@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.animation.TimelineBuilder;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -15,13 +20,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import penran.zombies.core.Coordinates;
 import penran.zombies.core.Link;
 import penran.zombies.core.Place;
+import penran.zombies.core.World;
 import penran.zombies.ui.Level.Road;
 import penran.zombies.ui.Level.Town;
 
-public class Land extends Pane {
+public final class Land extends Pane {
 
   private final Rectangle background;
 
@@ -33,9 +40,11 @@ public class Land extends Pane {
 
   private final Font font;
 
-  private final Map<String, Place> places = new HashMap<>();
+  private final List<Updateable> toUpdate = new ArrayList<>();
 
-  private final List<Link> links = new ArrayList<>();
+  private final Timeline loop;
+
+  private final World world;
 
   public Land(Level level, int width, int height, int marginWidth, int marginHeight) {
 
@@ -51,16 +60,19 @@ public class Land extends Pane {
     text.setY(font.getSize());
 
     // create the living objects
+    Map<String, Place> places = new HashMap<>();
     for (final Town t : level.towns) {
       places.put(t.name, new Place(t.name, t.size, (t.size - t.infected) / (double) t.size, new Coordinates(t.latitude,
           t.longitude)));
     }
+    List<Link> links = new ArrayList<>();
     for (final Road r : level.roads) {
       Place first = places.get(r.endPoints.get(0).name);
       Place second = places.get(r.endPoints.get(1).name);
       Link l = new Link(r.name, first, second);
       links.add(l);
     }
+    world = new World(places, links);
 
     // create the towns
     Group towns = new Group();
@@ -69,7 +81,7 @@ public class Land extends Pane {
       double radius = p.size / 2d;
 
       int ift = (int) Math.round(255 * p.getZombies());
-      Circle c = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius, Color.rgb(255, ift, ift));
+      final Circle c = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius, Color.rgb(255, ift, ift));
       c.setOnMouseClicked(new EventHandler<Event>() {
         @Override
         public void handle(Event paramT) {
@@ -79,6 +91,13 @@ public class Land extends Pane {
       });
 
       towns.getChildren().add(c);
+      toUpdate.add(new Updateable() {
+        @Override
+        public void update() {
+          int ift = (int) Math.round(255 * (1.0 - p.getZombies()));
+          c.setFill(Color.rgb(255, ift, ift));
+        }
+      });
 
       Circle bound = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius + 1);
       bound.setStrokeType(StrokeType.OUTSIDE);
@@ -102,7 +121,7 @@ public class Land extends Pane {
       line.setOnMouseClicked(new EventHandler<Event>() {
         @Override
         public void handle(Event paramT) {
-          text.setText(String.format("Road %s (%s km)", l.name, l.distance));
+          text.setText(String.format("Road %s (%s km)", l.name, Math.round(l.distance)));
         }
       });
 
@@ -130,6 +149,32 @@ public class Land extends Pane {
         - items.getTranslateY());
 
     getChildren().add(new Group(background, items, text));
+
+    loop = buildGameLoop();
   }
 
+  /** Start all animations. */
+  public void beginGameLoop() {
+    loop.play();
+    world.start(10);
+  }
+
+  /** Builds and sets the game loop ready to be started. */
+  private Timeline buildGameLoop() {
+    final Duration oneFrameAmt = Duration.millis(1000 / (float) 60);
+    final KeyFrame oneFrame = new KeyFrame(oneFrameAmt, new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        updatePlaces();
+      }
+    }); // oneFrame
+
+    // creates the game world's game loop (Timeline)
+    return TimelineBuilder.create().cycleCount(Animation.INDEFINITE).keyFrames(oneFrame).build();
+  }
+
+  private void updatePlaces() {
+    for (Updateable u : toUpdate)
+      u.update();
+  }
 }

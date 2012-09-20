@@ -55,10 +55,11 @@ public final class Place implements GameObject {
       zombies = Math.max(0.0, zombies + percent);
   }
 
+  /** If there are zombies, they gain 0.01% per turn. */
   @Override
   public void tick() {
-    // TODO Auto-generated method stub
-
+    if (zombies > 0 && zombies < 1)
+      addZombies(0.0001);
   }
 
 }

@@ -12,6 +12,8 @@ public final class Place implements GameObject {
 
   public final String name;
 
+  public final int size;
+
   public final Coordinates coordinates;
 
   // TODO optimize by using a common structure for all links
@@ -20,9 +22,11 @@ public final class Place implements GameObject {
   /** Percentage of zombies here. Must be volatile to be read from UI thread. */
   private volatile double zombies = 0;
 
-  public Place(String name, Coordinates coordinates) {
+  public Place(String name, int size, double zombies, Coordinates coordinates) {
     this.name = name;
+    this.size = size;
     this.coordinates = coordinates;
+    addZombies(zombies);
   }
 
   /**

@@ -7,21 +7,13 @@ package penran.zombies.core;
  */
 public final class Coordinates {
 
-	private final double latitude;
+  public final double latitude;
 
-	private final double longitude;
+  public final double longitude;
 
-	public Coordinates(double latitude, double longitude) {
-		this.latitude = latitude;
-		this.longitude = longitude;
-	}
-
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
+  public Coordinates(double latitude, double longitude) {
+    this.latitude = latitude;
+    this.longitude = longitude;
+  }
 
 }

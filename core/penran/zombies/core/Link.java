@@ -14,22 +14,25 @@ import static java.lang.Math.*;
  */
 public final class Link {
 
-	public final Place p1;
+  public final Place p1;
 
-	public final Place p2;
+  public final Place p2;
 
-	public final double distance;
+  public final double distance;
 
-	public Link(Place p1, Place p2) {
-		this.p1 = p1;
-		p1.addLink(this);
-		this.p2 = p2;
-		p2.addLink(this);
-		this.distance = distance(p1.coordinates, p2.coordinates);
-	}
+  public final String name;
 
-	private static double distance(Coordinates c1, Coordinates c2) {
-		return sqrt(pow(c1.getLatitude() - c2.getLatitude(), 2) + pow(c1.getLongitude() - c2.getLongitude(), 2));
-	}
+  public Link(String name, Place p1, Place p2) {
+    this.name = name;
+    this.p1 = p1;
+    p1.addLink(this);
+    this.p2 = p2;
+    p2.addLink(this);
+    this.distance = distance(p1.coordinates, p2.coordinates);
+  }
+
+  private static double distance(Coordinates c1, Coordinates c2) {
+    return sqrt(pow(c1.latitude - c2.latitude, 2) + pow(c1.longitude - c2.longitude, 2));
+  }
 
 }

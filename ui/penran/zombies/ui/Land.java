@@ -62,7 +62,7 @@ public final class Land extends Pane {
     // create the living objects
     Map<String, Place> places = new HashMap<>();
     for (final Town t : level.towns) {
-      places.put(t.name, new Place(t.name, t.size, (t.size - t.infected) / (double) t.size, new Coordinates(t.latitude,
+      places.put(t.name, new Place(t.name, t.size, t.infected / (double) t.size, new Coordinates(t.latitude,
           t.longitude)));
     }
     List<Link> links = new ArrayList<>();

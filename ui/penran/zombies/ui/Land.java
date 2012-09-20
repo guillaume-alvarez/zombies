@@ -1,34 +1,3 @@
-/*
- * Copyright (c) 2008, 2012 Oracle and/or its affiliates.
- * All rights reserved. Use is subject to license terms.
- *
- * This file is available and licensed under the following license:
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *  - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *  - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package penran.zombies.ui;
 
 import java.util.List;
@@ -58,8 +27,7 @@ public class Land extends Pane {
 
   private final Font font;
 
-  public Land(Level level, int width, int height, int marginWidth,
-      int marginHeight) {
+  public Land(Level level, int width, int height, int marginWidth, int marginHeight) {
 
     this.marginWidth = marginWidth;
     this.marginHeight = marginHeight;
@@ -72,6 +40,7 @@ public class Land extends Pane {
     text.setFont(font);
     text.setY(font.getSize());
 
+    // create the towns
     Group towns = new Group();
     Group halo = new Group();
     for (final Town t : level.towns) {
@@ -79,7 +48,7 @@ public class Land extends Pane {
         continue;
       double radius = t.size / 2d;
 
-      int ift = (int) Math.round(255*(t.size - t.infected)/(double) t.size);
+      int ift = (int) Math.round(255 * (t.size - t.infected) / (double) t.size);
       Circle c = new Circle(t.longitude, t.latitude, radius, Color.rgb(255, ift, ift));
       c.setOnMouseClicked(new EventHandler<Event>() {
         @Override
@@ -99,6 +68,7 @@ public class Land extends Pane {
     towns.setEffect(new BoxBlur(2, 2, 2));
     halo.setEffect(new BoxBlur(2, 2, 2));
 
+    // create the roads
     Group roads = new Group();
     for (final Road r : level.roads) {
       List<Town> ep = r.endPoints;
@@ -137,14 +107,13 @@ public class Land extends Pane {
     background.setWidth(width);
 
     Bounds bounds = items.getBoundsInParent();
-    double scale = Math.min((width - marginWidth) / bounds.getWidth(), (height
-        - marginHeight - font.getSize())
+    double scale = Math.min((width - marginWidth) / bounds.getWidth(), (height - marginHeight - font.getSize())
         / bounds.getHeight());
     items.setScaleX(scale);
     items.setScaleY(scale);
     items.setTranslateX(-items.getBoundsInParent().getMinX() + marginWidth / 2d - items.getTranslateX());
-    items.setTranslateY(-items.getBoundsInParent().getMinY() + font.getSize()
-        + marginWidth / 2d - items.getTranslateY());
+    items.setTranslateY(-items.getBoundsInParent().getMinY() + font.getSize() + marginWidth / 2d
+        - items.getTranslateY());
 
     getChildren().add(new Group(background, items, text));
   }

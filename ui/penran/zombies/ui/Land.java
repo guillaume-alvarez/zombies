@@ -1,6 +1,9 @@
 package penran.zombies.ui;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -12,6 +15,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import penran.zombies.core.Coordinates;
+import penran.zombies.core.Link;
+import penran.zombies.core.Place;
 import penran.zombies.ui.Level.Road;
 import penran.zombies.ui.Level.Town;
 
@@ -27,6 +33,10 @@ public class Land extends Pane {
 
   private final Font font;
 
+  private final Map<String, Place> places = new HashMap<>();
+
+  private final List<Link> links = new ArrayList<>();
+
   public Land(Level level, int width, int height, int marginWidth, int marginHeight) {
 
     this.marginWidth = marginWidth;
@@ -40,26 +50,37 @@ public class Land extends Pane {
     text.setFont(font);
     text.setY(font.getSize());
 
+    // create the living objects
+    for (final Town t : level.towns) {
+      places.put(t.name, new Place(t.name, t.size, (t.size - t.infected) / (double) t.size, new Coordinates(t.latitude,
+          t.longitude)));
+    }
+    for (final Road r : level.roads) {
+      Place first = places.get(r.endPoints.get(0).name);
+      Place second = places.get(r.endPoints.get(1).name);
+      Link l = new Link(r.name, first, second);
+      links.add(l);
+    }
+
     // create the towns
     Group towns = new Group();
     Group halo = new Group();
-    for (final Town t : level.towns) {
-      if (t.control)
-        continue;
-      double radius = t.size / 2d;
+    for (final Place p : places.values()) {
+      double radius = p.size / 2d;
 
-      int ift = (int) Math.round(255 * (t.size - t.infected) / (double) t.size);
-      Circle c = new Circle(t.longitude, t.latitude, radius, Color.rgb(255, ift, ift));
+      int ift = (int) Math.round(255 * p.getZombies());
+      Circle c = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius, Color.rgb(255, ift, ift));
       c.setOnMouseClicked(new EventHandler<Event>() {
         @Override
         public void handle(Event paramT) {
-          text.setText("Item: " + t.name + " infected=" + t.infected + "/" + t.size);
+          text.setText(String.format("Town %s infected=%s%% size=%s", p.name, Math.round(p.getZombies() * 100.0),
+              p.size));
         }
       });
 
       towns.getChildren().add(c);
 
-      Circle bound = new Circle(t.longitude, t.latitude, radius + 1);
+      Circle bound = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius + 1);
       bound.setStrokeType(StrokeType.OUTSIDE);
       bound.setStroke(Color.web("white", 1));
       bound.setStrokeWidth(2f);
@@ -70,32 +91,25 @@ public class Land extends Pane {
 
     // create the roads
     Group roads = new Group();
-    for (final Road r : level.roads) {
-      List<Town> ep = r.endPoints;
-      List<Town> ct = r.control;
+    for (final Link l : links) {
+      double[] points = new double[4];
+      points[0] = l.p1.coordinates.longitude;
+      points[1] = l.p1.coordinates.latitude;
+      points[2] = l.p2.coordinates.longitude;
+      points[3] = l.p2.coordinates.latitude;
 
-      double[] points = new double[ep.size() * 2 + ct.size() * 2];
-      points[0] = ep.get(0).longitude;
-      points[1] = ep.get(0).latitude;
-      for (int i = 0; i < ct.size(); i++) {
-        points[i * 2 + 2] = ct.get(i).longitude;
-        points[i * 2 + 3] = ct.get(i).latitude;
-      }
-      points[ct.size() * 2 + 2] = ep.get(1).longitude;
-      points[ct.size() * 2 + 3] = ep.get(1).latitude;
-
-      Polyline l = new Polyline(points);
-      l.setOnMouseClicked(new EventHandler<Event>() {
+      Polyline line = new Polyline(points);
+      line.setOnMouseClicked(new EventHandler<Event>() {
         @Override
         public void handle(Event paramT) {
-          text.setText("Item: " + r.name);
+          text.setText(String.format("Road %s (%s km)", l.name, l.distance));
         }
       });
 
-      l.setStrokeType(StrokeType.OUTSIDE);
-      l.setStroke(Color.web("white", 0.8f));
-      l.setStrokeWidth(1f);
-      roads.getChildren().add(l);
+      line.setStrokeType(StrokeType.OUTSIDE);
+      line.setStroke(Color.web("white", 0.8f));
+      line.setStrokeWidth(1f);
+      roads.getChildren().add(line);
     }
 
     background = new Rectangle(0, 0, width, height);

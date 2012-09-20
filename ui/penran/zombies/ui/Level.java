@@ -35,16 +35,13 @@ public class Level {
 
     public final String name;
 
-    public final boolean control;
-
     public final int infected;
 
-    private Town(String name, double latitude, double longitude, int size, boolean control, int infected) {
+    private Town(String name, double latitude, double longitude, int size, int infected) {
       this.name = name;
       this.latitude = latitude;
       this.longitude = longitude;
       this.size = size;
-      this.control = control;
       this.infected = infected;
     }
 
@@ -59,13 +56,11 @@ public class Level {
                             @Column("latitude") double latitude,
                             @Column("longitude") double longitude,
                             @Column(value = "size", required = false) Integer size,
-                            @Column(value = "infected count", required = false) Integer infected,
-                            @Column(value = "control", required = false) Boolean control) {
+                            @Column(value = "infected count", required = false) Integer infected) {
       return new Town(name,
                       latitude,
                       longitude,
                       size == null ? 0 : size,
-                      control == null ? false : control,
                       infected == null ? 0 : infected);
     }
   }
@@ -77,11 +72,8 @@ public class Level {
     // be useful, and currently consider only 2
     public final List<Town> endPoints;
 
-    public final List<Town> control;
-
-    private Road(String name, List<Town> endPoints, List<Town> control) {
+    private Road(String name, List<Town> endPoints) {
       this.name = name;
-      this.control = control;
       this.endPoints = Collections.unmodifiableList(new ArrayList<>(endPoints));
     }
 
@@ -111,15 +103,10 @@ public class Level {
     @Builder
     public Road make(@Column("name") String name,
                      @Column("endpoint1") String endPoint1,
-                     @Column("endpoint2") String endPoint2,
-                     @Column(value = "control", required = false, converter = ToList.class) List<String> control) {
-      List<Town> ctrl = new ArrayList<>();
-      for (String s : control)
-        ctrl.add(towns.get(s));
+                     @Column("endpoint2") String endPoint2) {
       return new Road(name,
                       Arrays.asList(towns.get(endPoint1),
-                                    towns.get(endPoint2)),
-                      ctrl);
+                                    towns.get(endPoint2)));
     }
   }
 

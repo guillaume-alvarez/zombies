@@ -50,10 +50,9 @@ public final class Place implements GameObject {
    */
   void addZombies(double percent) {
     if (percent > 0)
-      zombies = Math.max(100.0, zombies + percent);
+      zombies = Math.min(1.0, zombies + percent);
     else if (percent < 0)
-      zombies = Math.min(0.0, zombies + percent);
-
+      zombies = Math.max(0.0, zombies + percent);
   }
 
   @Override

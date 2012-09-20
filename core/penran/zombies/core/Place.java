@@ -10,6 +10,8 @@ import java.util.List;
  */
 public final class Place implements GameObject {
 
+  private static final double CONTAMINATION_RATE = 0.0001;
+
   public final String name;
 
   public final int size;
@@ -59,7 +61,7 @@ public final class Place implements GameObject {
   @Override
   public void tick() {
     if (zombies > 0 && zombies < 1)
-      addZombies(0.0001);
+      addZombies(CONTAMINATION_RATE);
   }
 
 }

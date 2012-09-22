@@ -61,7 +61,14 @@ public final class Place implements GameObject, Iterable<Link> {
   /** If there are zombies, they gain 0.01% per turn. */
   @Override
   public void tick() {
-    if (zombies > 0 && zombies < 1)
+    if (zombies >= 1.0) {
+      // contaminate links
+      for (Link l : links) {
+        if (l.addProgress(this, CONTAMINATION_RATE) >= 1.0)
+          l.otherPlace(this).addZombies(CONTAMINATION_RATE);
+      }
+    } else if (zombies > 0.0)
+      // increase contamination in city
       addZombies(CONTAMINATION_RATE);
   }
 

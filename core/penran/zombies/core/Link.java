@@ -52,11 +52,20 @@ public final class Link {
     return progressFromP2;
   }
 
-  void addProgress(Place p, double progress) {
+  double addProgress(Place p, double progress) {
     if (p == p1)
-      progressFromP1 = Math.max(0.0, Math.min(1.0, progressFromP1 + progress));
+      return progressFromP1 = Math.max(0.0, Math.min(1.0, progressFromP1 + progress));
     else if (p == p2)
-      progressFromP2 = Math.max(0.0, Math.min(1.0, progressFromP2 + progress));
+      return progressFromP2 = Math.max(0.0, Math.min(1.0, progressFromP2 + progress));
+    else
+      throw new IllegalStateException("Unknown place " + p + " for " + this);
+  }
+
+  Place otherPlace(Place p) {
+    if (p == p1)
+      return p2;
+    else if (p == p2)
+      return p1;
     else
       throw new IllegalStateException("Unknown place " + p + " for " + this);
   }

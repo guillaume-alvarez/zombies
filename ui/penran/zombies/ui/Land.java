@@ -82,8 +82,8 @@ public final class Land extends Pane {
     Group towns = new Group();
     Group halo = new Group();
     for (final Place p : places.values()) {
+      // draw the city
       double radius = p.size / 2d;
-
       int ift = (int) Math.round(255 * p.getZombies());
       final Circle c = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius, Color.rgb(255, ift, ift));
       c.setOnMouseClicked(new EventHandler<Event>() {
@@ -93,10 +93,14 @@ public final class Land extends Pane {
               p.size));
         }
       });
-
       towns.getChildren().add(c);
-      toUpdate.add(new TownUpdate(c, p));
 
+      // draw the contamination polygon around the city
+      Polygon poly = new Polygon();
+      towns.getChildren().add(poly);
+      toUpdate.add(new TownUpdate(c, p, poly));
+
+      // draw the white circle around the city
       Circle bound = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius + 1);
       bound.setStrokeType(StrokeType.OUTSIDE);
       bound.setStroke(Color.web("white", 1));
@@ -187,15 +191,48 @@ public final class Land extends Pane {
 
     private final Place p;
 
-    private TownUpdate(Circle c, Place p) {
+    private final Polygon poly;
+
+    private TownUpdate(Circle c, Place p, Polygon poly) {
       this.c = c;
       this.p = p;
+      this.poly = poly;
     }
 
     @Override
     public void update() {
-      int ift = (int) Math.round(255 * (1.0 - p.getZombies()));
-      c.setFill(Color.rgb(255, ift, ift));
+      final double zombies = p.getZombies();
+
+      // update the city circle
+      final int ift = (int) Math.round(255 * (1.0 - zombies));
+      final Color color = Color.rgb(255, ift, ift);
+      c.setFill(color);
+
+      // update its contamination polygon
+      if (zombies >= 1.0) {
+        // draw the polygon
+        final List<Double> points = new ArrayList<>();
+        for (Link l : p) {
+          double linkInfection = l.getProgressFrom(p);
+          points.add(infectionPointLongitude(p, l, linkInfection));
+          points.add(infectionPointLatitude(p, l, linkInfection));
+        }
+        poly.getPoints().setAll(points);
+        poly.setFill(color);
+      } else if (zombies <= 0.0)
+        // no longer any contamination
+        poly.getPoints().clear();
+      else
+        // just update the color from the city one
+        poly.setFill(color);
+    }
+
+    private static Double infectionPointLongitude(Place p, Link l, double infection) {
+      return p.coordinates.longitude + infection * (l.otherPlace(p).coordinates.longitude - p.coordinates.longitude);
+    }
+
+    private static Double infectionPointLatitude(Place p, Link l, double infection) {
+      return p.coordinates.latitude + infection * (l.otherPlace(p).coordinates.latitude - p.coordinates.latitude);
     }
   }
 }

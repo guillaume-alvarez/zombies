@@ -71,7 +71,7 @@ public final class Link {
       throw new IllegalStateException("Unknown place " + p + " for " + this);
   }
 
-  Place otherPlace(Place p) {
+  public Place otherPlace(Place p) {
     if (p == p1)
       return p2;
     else if (p == p2)

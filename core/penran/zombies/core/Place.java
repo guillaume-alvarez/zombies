@@ -1,6 +1,7 @@
 package penran.zombies.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * 
  * @author Guillaume Alvarez
  */
-public final class Place implements GameObject {
+public final class Place implements GameObject, Iterable<Link> {
 
   private static final double CONTAMINATION_RATE = 0.0001;
 
@@ -62,6 +63,11 @@ public final class Place implements GameObject {
   public void tick() {
     if (zombies > 0 && zombies < 1)
       addZombies(CONTAMINATION_RATE);
+  }
+
+  @Override
+  public Iterator<Link> iterator() {
+    return links.iterator();
   }
 
 }

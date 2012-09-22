@@ -44,12 +44,13 @@ public final class Link {
     return sqrt(pow(c1.latitude - c2.latitude, 2) + pow(c1.longitude - c2.longitude, 2));
   }
 
-  public double getProgressFromP1() {
-    return progressFromP1;
-  }
-
-  public double getProgressFromP2() {
-    return progressFromP2;
+  public double getProgressFrom(Place p) {
+    if (p == p1)
+      return progressFromP1;
+    else if (p == p2)
+      return progressFromP2;
+    else
+      throw new IllegalStateException("Unknown place " + p + " for " + this);
   }
 
   double addProgress(Place p, double progress) {
@@ -57,6 +58,15 @@ public final class Link {
       return progressFromP1 = Math.max(0.0, Math.min(1.0, progressFromP1 + progress));
     else if (p == p2)
       return progressFromP2 = Math.max(0.0, Math.min(1.0, progressFromP2 + progress));
+    else
+      throw new IllegalStateException("Unknown place " + p + " for " + this);
+  }
+
+  void removeProgress(Place p) {
+    if (p == p1)
+      progressFromP1 = 0.0;
+    else if (p == p2)
+      progressFromP2 = 0.0;
     else
       throw new IllegalStateException("Unknown place " + p + " for " + this);
   }

@@ -20,7 +20,7 @@ public final class Place implements GameObject, Iterable<Link> {
   public final Coordinates coordinates;
 
   // TODO optimize by using a common structure for all links
-  private final List<Link> links = new ArrayList<Link>();
+  private final List<Link> links = new ArrayList<>();
 
   /** Percentage of zombies here. Must be volatile to be read from UI thread. */
   private volatile double zombies = 0;

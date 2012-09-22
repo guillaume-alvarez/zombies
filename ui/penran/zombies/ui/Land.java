@@ -95,13 +95,7 @@ public final class Land extends Pane {
       });
 
       towns.getChildren().add(c);
-      toUpdate.add(new Updateable() {
-        @Override
-        public void update() {
-          int ift = (int) Math.round(255 * (1.0 - p.getZombies()));
-          c.setFill(Color.rgb(255, ift, ift));
-        }
-      });
+      toUpdate.add(new TownUpdate(c, p));
 
       Circle bound = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius + 1);
       bound.setStrokeType(StrokeType.OUTSIDE);
@@ -169,7 +163,7 @@ public final class Land extends Pane {
     final KeyFrame oneFrame = new KeyFrame(oneFrameAmt, new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        updatePlaces();
+        updateFromEngine();
       }
     }); // oneFrame
 
@@ -177,8 +171,31 @@ public final class Land extends Pane {
     return TimelineBuilder.create().cycleCount(Animation.INDEFINITE).keyFrames(oneFrame).build();
   }
 
-  private void updatePlaces() {
+  private void updateFromEngine() {
     for (Updateable u : toUpdate)
       u.update();
+  }
+
+  /**
+   * Recompute the town color from the infected rate.
+   * 
+   * @author Guillaume Alvarez
+   */
+  private static final class TownUpdate implements Updateable {
+
+    private final Circle c;
+
+    private final Place p;
+
+    private TownUpdate(Circle c, Place p) {
+      this.c = c;
+      this.p = p;
+    }
+
+    @Override
+    public void update() {
+      int ift = (int) Math.round(255 * (1.0 - p.getZombies()));
+      c.setFill(Color.rgb(255, ift, ift));
+    }
   }
 }

@@ -30,6 +30,10 @@ import penran.zombies.ui.Level.Town;
 
 public final class Land extends Pane {
 
+  private static final int FRAMES_PER_SECOND = 60;
+
+  private static final int TICKS_PER_SECOND = 100;
+
   private final Rectangle background;
 
   private final Group items;
@@ -156,12 +160,12 @@ public final class Land extends Pane {
   /** Start all animations. */
   public void beginGameLoop() {
     loop.play();
-    world.start(10);
+    world.start(1000 / TICKS_PER_SECOND);
   }
 
   /** Builds and sets the game loop ready to be started. */
   private Timeline buildGameLoop() {
-    final Duration oneFrameAmt = Duration.millis(1000 / (float) 60);
+    final Duration oneFrameAmt = Duration.millis(1000 / (float) FRAMES_PER_SECOND);
     final KeyFrame oneFrame = new KeyFrame(oneFrameAmt, new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {

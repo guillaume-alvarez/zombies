@@ -35,6 +35,11 @@ public final class Link {
     this.distance = distance(p1.coordinates, p2.coordinates);
   }
 
+  @Override
+  public String toString() {
+    return name + "[" + p1 + "->" + p2 + "]";
+  }
+
   private static double distance(Coordinates c1, Coordinates c2) {
     return sqrt(pow(c1.latitude - c2.latitude, 2) + pow(c1.longitude - c2.longitude, 2));
   }
@@ -45,6 +50,15 @@ public final class Link {
 
   public double getProgressFromP2() {
     return progressFromP2;
+  }
+
+  void addProgress(Place p, double progress) {
+    if (p == p1)
+      progressFromP1 = Math.max(0.0, Math.min(1.0, progressFromP1 + progress));
+    else if (p == p2)
+      progressFromP2 = Math.max(0.0, Math.min(1.0, progressFromP2 + progress));
+    else
+      throw new IllegalStateException("Unknown place " + p + " for " + this);
   }
 
 }

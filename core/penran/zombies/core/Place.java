@@ -49,7 +49,7 @@ public final class Place implements GameObject, Iterable<Link> {
 
   /**
    * Add a percentage to current zombie presence. The percentage can be negative
-   * to avoid
+   * to remove zombies from the city.
    */
   void addZombies(double percent) {
     if (percent > 0)

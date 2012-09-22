@@ -22,6 +22,10 @@ public final class Link {
 
   public final String name;
 
+  private volatile double progressFromP1 = 0;
+
+  private volatile double progressFromP2 = 0;
+
   public Link(String name, Place p1, Place p2) {
     this.name = name;
     this.p1 = p1;
@@ -33,6 +37,14 @@ public final class Link {
 
   private static double distance(Coordinates c1, Coordinates c2) {
     return sqrt(pow(c1.latitude - c2.latitude, 2) + pow(c1.longitude - c2.longitude, 2));
+  }
+
+  public double getProgressFromP1() {
+    return progressFromP1;
+  }
+
+  public double getProgressFromP2() {
+    return progressFromP2;
   }
 
 }

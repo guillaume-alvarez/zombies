@@ -86,27 +86,7 @@ public final class Land extends Pane {
     world = new World(places, links);
 
     // create simple UI
-    ui = new HBox(10);
-    ui.setFillHeight(true);
-    final Font font = Font.font("arial", 20);
-
-    final Label global = new Label("Infection: 0%");
-    toUpdate.add(new Updateable() {
-      @Override
-      public void update() {
-        global.setText("Infection: " + Math.round(world.getContamination() * 100.0) + "%");
-      }
-    });
-    global.setTextFill(Color.WHITE);
-    global.setFont(font);
-    ui.getChildren().add(global);
-
-    final Text text = new Text(0, 0, "");
-    text.textProperty().bind(selected);
-    text.setFill(Color.WHITE);
-    text.setFont(font);
-    text.setY(font.getSize());
-    ui.getChildren().add(text);
+    ui = initUI();
 
     // create the towns
     Group towns = new Group();
@@ -164,6 +144,32 @@ public final class Land extends Pane {
     getChildren().add(new Group(background, items, ui));
 
     loop = buildGameLoop();
+  }
+
+  private HBox initUI() {
+    final HBox ui = new HBox(10);
+    ui.setFillHeight(true);
+    final Font font = Font.font("arial", 20);
+
+    final Label global = new Label("Infection: 0%");
+    toUpdate.add(new Updateable() {
+      @Override
+      public void update() {
+        global.setText("Infection: " + Math.round(world.getContamination() * 100.0) + "%");
+      }
+    });
+    global.setTextFill(Color.WHITE);
+    global.setFont(font);
+    ui.getChildren().add(global);
+
+    final Text text = new Text(0, 0, "");
+    text.textProperty().bind(selected);
+    text.setFill(Color.WHITE);
+    text.setFont(font);
+    text.setY(font.getSize());
+    ui.getChildren().add(text);
+
+    return ui;
   }
 
   private Circle initTown(final Place p) {

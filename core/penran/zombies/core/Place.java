@@ -11,6 +11,7 @@ import java.util.List;
  */
 public final class Place implements GameObject, Iterable<Link> {
 
+  /** City contamination rate, here 0.01%. */
   private static final double CONTAMINATION_RATE = 0.0001;
 
   public final String name;
@@ -64,7 +65,7 @@ public final class Place implements GameObject, Iterable<Link> {
     if (zombies >= 1.0)
       // contaminate links
       for (Link l : links) {
-        if (l.addProgress(this, CONTAMINATION_RATE) >= 1.0)
+        if (l.addProgress(this) >= l.distance)
           l.otherPlace(this).addZombies(CONTAMINATION_RATE);
       }
     else if (zombies > 0.0)

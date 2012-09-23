@@ -228,11 +228,13 @@ public final class Land extends Pane {
     }
 
     private static Double infectionPointLongitude(Place p, Link l, double infection) {
-      return p.coordinates.longitude + infection * (l.otherPlace(p).coordinates.longitude - p.coordinates.longitude);
+      return p.coordinates.longitude + (infection / l.distance)
+          * (l.otherPlace(p).coordinates.longitude - p.coordinates.longitude);
     }
 
     private static Double infectionPointLatitude(Place p, Link l, double infection) {
-      return p.coordinates.latitude + infection * (l.otherPlace(p).coordinates.latitude - p.coordinates.latitude);
+      return p.coordinates.latitude + (infection / l.distance)
+          * (l.otherPlace(p).coordinates.latitude - p.coordinates.latitude);
     }
   }
 }

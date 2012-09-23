@@ -14,16 +14,22 @@ import static java.lang.Math.*;
  */
 public final class Link {
 
+  /** Distance the infection progresses by tick, here 0.1km. */
+  private static final double INFECTION_PROGRESS = 0.1;
+
   public final Place p1;
 
   public final Place p2;
 
+  /** Distance between the two places, in km. */
   public final double distance;
 
   public final String name;
 
+  /** In {@link #distance} unit. */
   private volatile double progressFromP1 = 0;
 
+  /** In {@link #distance} unit. */
   private volatile double progressFromP2 = 0;
 
   public Link(String name, Place p1, Place p2) {
@@ -53,11 +59,12 @@ public final class Link {
       throw new IllegalStateException("Unknown place " + p + " for " + this);
   }
 
-  double addProgress(Place p, double progress) {
+  /** Make the infection progress through the link. */
+  double addProgress(Place p) {
     if (p == p1)
-      return progressFromP1 = Math.max(0.0, Math.min(1.0, progressFromP1 + progress));
+      return progressFromP1 = Math.max(0.0, Math.min(distance, progressFromP1 + INFECTION_PROGRESS));
     else if (p == p2)
-      return progressFromP2 = Math.max(0.0, Math.min(1.0, progressFromP2 + progress));
+      return progressFromP2 = Math.max(0.0, Math.min(distance, progressFromP2 + INFECTION_PROGRESS));
     else
       throw new IllegalStateException("Unknown place " + p + " for " + this);
   }

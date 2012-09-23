@@ -9,18 +9,23 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -42,6 +47,8 @@ public final class Land extends Pane {
   private final Group items;
 
   private final HBox ui;
+
+  private final SimpleDoubleProperty zoom = new SimpleDoubleProperty(1.0);
 
   private final int marginWidth;
 
@@ -131,13 +138,21 @@ public final class Land extends Pane {
     background.setWidth(width);
 
     Bounds bounds = items.getBoundsInParent();
-    double scale = Math.min((width - marginWidth) / bounds.getWidth(), (height - marginHeight - font.getSize())
-        / bounds.getHeight());
-    items.setScaleX(scale);
-    items.setScaleY(scale);
+    zoom.set(Math.min((background.getWidth() - marginWidth) / bounds.getWidth(),
+        (background.getHeight() - marginHeight - ui.getHeight()) / bounds.getHeight()));
+    items.scaleXProperty().bind(zoom);
+    items.scaleYProperty().bind(zoom);
     items.setTranslateX(-items.getBoundsInParent().getMinX() + marginWidth / 2d - items.getTranslateX());
     items.setTranslateY(-items.getBoundsInParent().getMinY() + ui.getHeight() + marginWidth / 2d
         - items.getTranslateY());
+
+    setOnScroll(new EventHandler<ScrollEvent>() {
+      @Override
+      public void handle(ScrollEvent event) {
+        double newZoom = zoom.get() + 0.01 * event.getDeltaY();
+        zoom.set(Math.min(100.0, Math.max(0.1, newZoom)));
+      }
+    });
 
     getChildren().add(new Group(background, items, ui));
 

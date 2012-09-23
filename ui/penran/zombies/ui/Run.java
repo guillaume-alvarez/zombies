@@ -2,15 +2,11 @@ package penran.zombies.ui;
 
 import java.io.File;
 
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.TimelineBuilder;
 import javafx.application.Application;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+import javafx.stage.WindowEvent;
 
 public class Run extends Application {
   public static void main(String[] args) {
@@ -26,5 +22,11 @@ public class Run extends Application {
 
     stage.show();
 
+  }
+
+  @Override
+  public void stop() throws Exception {
+    super.stop();
+    System.exit(0);
   }
 }

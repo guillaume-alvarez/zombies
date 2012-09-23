@@ -2,6 +2,8 @@ package penran.zombies.core;
 
 import static java.lang.Math.*;
 
+import java.util.Comparator;
+
 /**
  * Link between two places.
  * <p>
@@ -35,10 +37,10 @@ public final class Link {
   public Link(String name, Place p1, Place p2) {
     this.name = name;
     this.p1 = p1;
-    p1.addLink(this);
     this.p2 = p2;
-    p2.addLink(this);
     this.distance = distance(p1.coordinates, p2.coordinates);
+    p1.addLink(this);
+    p2.addLink(this);
   }
 
   @Override

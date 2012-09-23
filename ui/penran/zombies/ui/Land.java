@@ -10,6 +10,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -49,6 +50,8 @@ public final class Land extends Pane {
   private final HBox ui;
 
   private final SimpleDoubleProperty zoom = new SimpleDoubleProperty(1.0);
+
+  private final SimpleStringProperty selected = new SimpleStringProperty("");
 
   private final int marginWidth;
 
@@ -99,6 +102,7 @@ public final class Land extends Pane {
     ui.getChildren().add(global);
 
     final Text text = new Text(0, 0, "");
+    text.textProperty().bind(selected);
     text.setFill(Color.WHITE);
     text.setFont(font);
     text.setY(font.getSize());
@@ -109,7 +113,7 @@ public final class Land extends Pane {
     Group halo = new Group();
     Group infection = new Group();
     for (final Place p : places.values()) {
-      final Circle circle = initTown(text, p);
+      final Circle circle = initTown(p);
       towns.getChildren().add(circle);
       final Polygon polygon = initInfection(p);
       infection.getChildren().add(polygon);
@@ -125,7 +129,7 @@ public final class Land extends Pane {
     // create the roads
     Group roads = new Group();
     for (final Link l : links) {
-      roads.getChildren().add(initRoad(text, l));
+      roads.getChildren().add(initRoad(l));
     }
 
     background = new Rectangle(0, 0, width, height);
@@ -162,7 +166,7 @@ public final class Land extends Pane {
     loop = buildGameLoop();
   }
 
-  private Circle initTown(final Text text, final Place p) {
+  private Circle initTown(final Place p) {
     // draw the city
     final double radius = p.size / 2d;
     final int ift = (int) Math.round(255 * p.getZombies());
@@ -170,7 +174,8 @@ public final class Land extends Pane {
     c.setOnMouseClicked(new EventHandler<Event>() {
       @Override
       public void handle(Event paramT) {
-        text.setText(String.format("Town %s infected=%s%% size=%s", p.name, Math.round(p.getZombies() * 100.0), p.size));
+        selected.setValue(String.format("Town %s infected=%s%% size=%s", p.name, Math.round(p.getZombies() * 100.0),
+            p.size));
       }
     });
     return c;
@@ -192,14 +197,15 @@ public final class Land extends Pane {
     return bound;
   }
 
-  private Polyline initRoad(final Text text, final Link l) {
+  private Polyline initRoad(final Link l) {
     final Polyline line = new Polyline(new double[] { l.p1.coordinates.longitude, l.p1.coordinates.latitude,
         l.p2.coordinates.longitude, l.p2.coordinates.latitude });
     line.setOnMouseClicked(new EventHandler<Event>() {
       @Override
       public void handle(Event paramT) {
-        text.setText(String.format("Road %s (%s km)" + "\n infection from %s: %dkm" + "\n infection from %s: %dkm",
-            l.name, Math.round(l.distance), l.p1.name, Math.round(l.getProgressFrom(l.p1)), l.p2.name,
+        selected.setValue(String.format(
+            "Road %s (%s km)" + "\n infection from %s: %dkm" + "\n infection from %s: %dkm", l.name,
+            Math.round(l.distance), l.p1.name, Math.round(l.getProgressFrom(l.p1)), l.p2.name,
             Math.round(l.getProgressFrom(l.p2))));
       }
     });

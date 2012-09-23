@@ -151,6 +151,9 @@ public final class Land extends Pane {
       public void handle(ScrollEvent event) {
         double newZoom = zoom.get() + 0.01 * event.getDeltaY();
         zoom.set(Math.min(100.0, Math.max(0.1, newZoom)));
+        // TODO should zoom to the cursor point, not to the center
+        // TODO should also be possible to drag'n drop to move the view
+        // thus we will have to include translation
       }
     });
 

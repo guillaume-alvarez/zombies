@@ -14,6 +14,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -25,7 +26,6 @@ import penran.zombies.core.Coordinates;
 import penran.zombies.core.Link;
 import penran.zombies.core.Place;
 import penran.zombies.core.World;
-import penran.zombies.ui.Land.TownUpdate;
 import penran.zombies.ui.Level.Road;
 import penran.zombies.ui.Level.Town;
 
@@ -83,16 +83,25 @@ public final class Land extends Pane {
     Group towns = new Group();
     Group halo = new Group();
     Group infection = new Group();
-    for (final Place p : places.values())
-      initTown(text, towns, halo, infection, p);
+    for (final Place p : places.values()) {
+      final Circle circle = initTown(text, p);
+      towns.getChildren().add(circle);
+      final Polygon polygon = initInfection(p);
+      infection.getChildren().add(polygon);
+      halo.getChildren().add(initHalo(p));
+
+      // always update the town
+      toUpdate.add(new TownUpdate(circle, p, polygon));
+    }
     infection.setEffect(new BoxBlur(2, 2, 2));
     towns.setEffect(new BoxBlur(2, 2, 2));
     halo.setEffect(new BoxBlur(2, 2, 2));
 
     // create the roads
     Group roads = new Group();
-    for (final Link l : links)
-      initRoad(text, roads, l);
+    for (final Link l : links) {
+      roads.getChildren().add(initRoad(text, l));
+    }
 
     background = new Rectangle(0, 0, width, height);
     background.setFill(Color.BLACK);
@@ -117,10 +126,10 @@ public final class Land extends Pane {
     loop = buildGameLoop();
   }
 
-  private void initTown(final Text text, Group towns, Group halo, Group infection, final Place p) {
+  private Circle initTown(final Text text, final Place p) {
     // draw the city
-    double radius = p.size / 2d;
-    int ift = (int) Math.round(255 * p.getZombies());
+    final double radius = p.size / 2d;
+    final int ift = (int) Math.round(255 * p.getZombies());
     final Circle c = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius, Color.rgb(255, ift, ift));
     c.setOnMouseClicked(new EventHandler<Event>() {
       @Override
@@ -128,31 +137,28 @@ public final class Land extends Pane {
         text.setText(String.format("Town %s infected=%s%% size=%s", p.name, Math.round(p.getZombies() * 100.0), p.size));
       }
     });
-    towns.getChildren().add(c);
+    return c;
+  }
 
-    // draw the contamination polygon around the city
+  /** Draw the contamination polygon around the city. */
+  private Polygon initInfection(Place p) {
     Polygon poly = new Polygon();
-    infection.getChildren().add(poly);
+    return poly;
+  }
 
-    // always update the town
-    toUpdate.add(new TownUpdate(c, p, poly));
-
-    // draw the white circle around the city
+  /** Draw the white circle around the city. */
+  private Circle initHalo(Place p) {
+    final double radius = p.size / 2d;
     Circle bound = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius + 1);
     bound.setStrokeType(StrokeType.OUTSIDE);
     bound.setStroke(Color.web("white", 1));
     bound.setStrokeWidth(2f);
-    halo.getChildren().add(bound);
+    return bound;
   }
 
-  private void initRoad(final Text text, Group roads, final Link l) {
-    double[] points = new double[4];
-    points[0] = l.p1.coordinates.longitude;
-    points[1] = l.p1.coordinates.latitude;
-    points[2] = l.p2.coordinates.longitude;
-    points[3] = l.p2.coordinates.latitude;
-
-    Polyline line = new Polyline(points);
+  private Polyline initRoad(final Text text, final Link l) {
+    final Polyline line = new Polyline(new double[] { l.p1.coordinates.longitude, l.p1.coordinates.latitude,
+        l.p2.coordinates.longitude, l.p2.coordinates.latitude });
     line.setOnMouseClicked(new EventHandler<Event>() {
       @Override
       public void handle(Event paramT) {
@@ -163,7 +169,7 @@ public final class Land extends Pane {
     line.setStrokeType(StrokeType.OUTSIDE);
     line.setStroke(Color.web("white", 0.8f));
     line.setStrokeWidth(1f);
-    roads.getChildren().add(line);
+    return line;
   }
 
   /** Start all animations. */

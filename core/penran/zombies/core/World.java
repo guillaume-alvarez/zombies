@@ -43,6 +43,17 @@ public class World {
     thread.start();
   }
 
+  /** Get a global contamination percentage. */
+  public double getContamination() {
+    double contaminated = 0;
+    double size = 0;
+    for (Place p : places.values()) {
+      contaminated += p.getZombies() * p.size;
+      size += p.size;
+    }
+    return Math.max(0.0, Math.min(1.0, contaminated / size));
+  }
+
   public void stop() {
     started = false;
     try {

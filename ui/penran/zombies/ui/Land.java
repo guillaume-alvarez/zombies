@@ -15,7 +15,9 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -39,11 +41,11 @@ public final class Land extends Pane {
 
   private final Group items;
 
+  private final HBox ui;
+
   private final int marginWidth;
 
   private final int marginHeight;
-
-  private final Font font;
 
   private final List<Updateable> toUpdate = new ArrayList<>();
 
@@ -57,12 +59,6 @@ public final class Land extends Pane {
     this.marginHeight = marginHeight;
 
     setPrefSize(width, height);
-
-    font = Font.font("arial", 20);
-    final Text text = new Text(0, 0, "Item: ");
-    text.setFill(Color.WHITE);
-    text.setFont(font);
-    text.setY(font.getSize());
 
     // create the living objects
     Map<String, Place> places = new HashMap<>();
@@ -78,6 +74,28 @@ public final class Land extends Pane {
       links.add(l);
     }
     world = new World(places, links);
+
+    // create simple UI
+    ui = new HBox(10);
+    ui.setFillHeight(true);
+    final Font font = Font.font("arial", 20);
+
+    final Label global = new Label("Infection: 0%");
+    toUpdate.add(new Updateable() {
+      @Override
+      public void update() {
+        global.setText("Infection: " + Math.round(world.getContamination() * 100.0) + "%");
+      }
+    });
+    global.setTextFill(Color.WHITE);
+    global.setFont(font);
+    ui.getChildren().add(global);
+
+    final Text text = new Text(0, 0, "");
+    text.setFill(Color.WHITE);
+    text.setFont(font);
+    text.setY(font.getSize());
+    ui.getChildren().add(text);
 
     // create the towns
     Group towns = new Group();
@@ -118,10 +136,10 @@ public final class Land extends Pane {
     items.setScaleX(scale);
     items.setScaleY(scale);
     items.setTranslateX(-items.getBoundsInParent().getMinX() + marginWidth / 2d - items.getTranslateX());
-    items.setTranslateY(-items.getBoundsInParent().getMinY() + font.getSize() + marginWidth / 2d
+    items.setTranslateY(-items.getBoundsInParent().getMinY() + ui.getHeight() + marginWidth / 2d
         - items.getTranslateY());
 
-    getChildren().add(new Group(background, items, text));
+    getChildren().add(new Group(background, items, ui));
 
     loop = buildGameLoop();
   }

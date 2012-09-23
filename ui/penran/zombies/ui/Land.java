@@ -81,6 +81,7 @@ public final class Land extends Pane {
     // create the towns
     Group towns = new Group();
     Group halo = new Group();
+    Group infection = new Group();
     for (final Place p : places.values()) {
       // draw the city
       double radius = p.size / 2d;
@@ -97,7 +98,9 @@ public final class Land extends Pane {
 
       // draw the contamination polygon around the city
       Polygon poly = new Polygon();
-      towns.getChildren().add(poly);
+      infection.getChildren().add(poly);
+
+      // always update the town
       toUpdate.add(new TownUpdate(c, p, poly));
 
       // draw the white circle around the city
@@ -107,6 +110,7 @@ public final class Land extends Pane {
       bound.setStrokeWidth(2f);
       halo.getChildren().add(bound);
     }
+    infection.setEffect(new BoxBlur(2, 2, 2));
     towns.setEffect(new BoxBlur(2, 2, 2));
     halo.setEffect(new BoxBlur(2, 2, 2));
 
@@ -135,7 +139,8 @@ public final class Land extends Pane {
 
     background = new Rectangle(0, 0, width, height);
     background.setFill(Color.BLACK);
-    items = new Group(halo, roads, towns);
+    // city halos and roads should always be visible over infection
+    items = new Group(infection, halo, roads, towns);
     items.setManaged(false);
 
     background.setHeight(height);

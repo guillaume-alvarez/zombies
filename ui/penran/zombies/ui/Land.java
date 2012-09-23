@@ -162,7 +162,9 @@ public final class Land extends Pane {
     line.setOnMouseClicked(new EventHandler<Event>() {
       @Override
       public void handle(Event paramT) {
-        text.setText(String.format("Road %s (%s km)", l.name, Math.round(l.distance)));
+        text.setText(String.format("Road %s (%s km)" + "\n infection from %s: %dkm" + "\n infection from %s: %dkm",
+            l.name, Math.round(l.distance), l.p1.name, Math.round(l.getProgressFrom(l.p1)), l.p2.name,
+            Math.round(l.getProgressFrom(l.p2))));
       }
     });
 
@@ -229,6 +231,11 @@ public final class Land extends Pane {
           double linkInfection = l.getProgressFrom(p) / l.distance;
           points.add(infectionPointLongitude(p, l, linkInfection));
           points.add(infectionPointLatitude(p, l, linkInfection));
+        }
+        if (points.size() == 4) {
+          // when only connected to 2 other towns, use the orinal one
+          points.add(p.coordinates.longitude);
+          points.add(p.coordinates.latitude);
         }
         poly.getPoints().setAll(points);
         poly.setFill(color);

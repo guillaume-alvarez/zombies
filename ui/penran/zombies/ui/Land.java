@@ -25,6 +25,7 @@ import penran.zombies.core.Coordinates;
 import penran.zombies.core.Link;
 import penran.zombies.core.Place;
 import penran.zombies.core.World;
+import penran.zombies.ui.Land.TownUpdate;
 import penran.zombies.ui.Level.Road;
 import penran.zombies.ui.Level.Town;
 
@@ -82,60 +83,16 @@ public final class Land extends Pane {
     Group towns = new Group();
     Group halo = new Group();
     Group infection = new Group();
-    for (final Place p : places.values()) {
-      // draw the city
-      double radius = p.size / 2d;
-      int ift = (int) Math.round(255 * p.getZombies());
-      final Circle c = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius, Color.rgb(255, ift, ift));
-      c.setOnMouseClicked(new EventHandler<Event>() {
-        @Override
-        public void handle(Event paramT) {
-          text.setText(String.format("Town %s infected=%s%% size=%s", p.name, Math.round(p.getZombies() * 100.0),
-              p.size));
-        }
-      });
-      towns.getChildren().add(c);
-
-      // draw the contamination polygon around the city
-      Polygon poly = new Polygon();
-      infection.getChildren().add(poly);
-
-      // always update the town
-      toUpdate.add(new TownUpdate(c, p, poly));
-
-      // draw the white circle around the city
-      Circle bound = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius + 1);
-      bound.setStrokeType(StrokeType.OUTSIDE);
-      bound.setStroke(Color.web("white", 1));
-      bound.setStrokeWidth(2f);
-      halo.getChildren().add(bound);
-    }
+    for (final Place p : places.values())
+      initTown(text, towns, halo, infection, p);
     infection.setEffect(new BoxBlur(2, 2, 2));
     towns.setEffect(new BoxBlur(2, 2, 2));
     halo.setEffect(new BoxBlur(2, 2, 2));
 
     // create the roads
     Group roads = new Group();
-    for (final Link l : links) {
-      double[] points = new double[4];
-      points[0] = l.p1.coordinates.longitude;
-      points[1] = l.p1.coordinates.latitude;
-      points[2] = l.p2.coordinates.longitude;
-      points[3] = l.p2.coordinates.latitude;
-
-      Polyline line = new Polyline(points);
-      line.setOnMouseClicked(new EventHandler<Event>() {
-        @Override
-        public void handle(Event paramT) {
-          text.setText(String.format("Road %s (%s km)", l.name, Math.round(l.distance)));
-        }
-      });
-
-      line.setStrokeType(StrokeType.OUTSIDE);
-      line.setStroke(Color.web("white", 0.8f));
-      line.setStrokeWidth(1f);
-      roads.getChildren().add(line);
-    }
+    for (final Link l : links)
+      initRoad(text, roads, l);
 
     background = new Rectangle(0, 0, width, height);
     background.setFill(Color.BLACK);
@@ -160,6 +117,55 @@ public final class Land extends Pane {
     loop = buildGameLoop();
   }
 
+  private void initTown(final Text text, Group towns, Group halo, Group infection, final Place p) {
+    // draw the city
+    double radius = p.size / 2d;
+    int ift = (int) Math.round(255 * p.getZombies());
+    final Circle c = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius, Color.rgb(255, ift, ift));
+    c.setOnMouseClicked(new EventHandler<Event>() {
+      @Override
+      public void handle(Event paramT) {
+        text.setText(String.format("Town %s infected=%s%% size=%s", p.name, Math.round(p.getZombies() * 100.0), p.size));
+      }
+    });
+    towns.getChildren().add(c);
+
+    // draw the contamination polygon around the city
+    Polygon poly = new Polygon();
+    infection.getChildren().add(poly);
+
+    // always update the town
+    toUpdate.add(new TownUpdate(c, p, poly));
+
+    // draw the white circle around the city
+    Circle bound = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius + 1);
+    bound.setStrokeType(StrokeType.OUTSIDE);
+    bound.setStroke(Color.web("white", 1));
+    bound.setStrokeWidth(2f);
+    halo.getChildren().add(bound);
+  }
+
+  private void initRoad(final Text text, Group roads, final Link l) {
+    double[] points = new double[4];
+    points[0] = l.p1.coordinates.longitude;
+    points[1] = l.p1.coordinates.latitude;
+    points[2] = l.p2.coordinates.longitude;
+    points[3] = l.p2.coordinates.latitude;
+
+    Polyline line = new Polyline(points);
+    line.setOnMouseClicked(new EventHandler<Event>() {
+      @Override
+      public void handle(Event paramT) {
+        text.setText(String.format("Road %s (%s km)", l.name, Math.round(l.distance)));
+      }
+    });
+
+    line.setStrokeType(StrokeType.OUTSIDE);
+    line.setStroke(Color.web("white", 0.8f));
+    line.setStrokeWidth(1f);
+    roads.getChildren().add(line);
+  }
+
   /** Start all animations. */
   public void beginGameLoop() {
     loop.play();
@@ -172,17 +178,13 @@ public final class Land extends Pane {
     final KeyFrame oneFrame = new KeyFrame(oneFrameAmt, new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        updateFromEngine();
+        for (Updateable u : toUpdate)
+          u.update();
       }
     }); // oneFrame
 
     // creates the game world's game loop (Timeline)
     return TimelineBuilder.create().cycleCount(Animation.INDEFINITE).keyFrames(oneFrame).build();
-  }
-
-  private void updateFromEngine() {
-    for (Updateable u : toUpdate)
-      u.update();
   }
 
   /**

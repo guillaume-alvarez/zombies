@@ -93,7 +93,7 @@ public final class Land extends Pane {
       // always update the town
       toUpdate.add(new TownUpdate(circle, p, polygon));
     }
-    infection.setEffect(new BoxBlur(2, 2, 2));
+    infection.setEffect(new BoxBlur(5, 5, 3));
     towns.setEffect(new BoxBlur(2, 2, 2));
     halo.setEffect(new BoxBlur(2, 2, 2));
 

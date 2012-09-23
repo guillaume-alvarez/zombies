@@ -213,7 +213,7 @@ public final class Land extends Pane {
         // draw the polygon
         final List<Double> points = new ArrayList<>();
         for (Link l : p) {
-          double linkInfection = l.getProgressFrom(p);
+          double linkInfection = l.getProgressFrom(p) / l.distance;
           points.add(infectionPointLongitude(p, l, linkInfection));
           points.add(infectionPointLatitude(p, l, linkInfection));
         }
@@ -228,13 +228,11 @@ public final class Land extends Pane {
     }
 
     private static Double infectionPointLongitude(Place p, Link l, double infection) {
-      return p.coordinates.longitude + (infection / l.distance)
-          * (l.otherPlace(p).coordinates.longitude - p.coordinates.longitude);
+      return p.coordinates.longitude + infection * (l.otherPlace(p).coordinates.longitude - p.coordinates.longitude);
     }
 
     private static Double infectionPointLatitude(Place p, Link l, double infection) {
-      return p.coordinates.latitude + (infection / l.distance)
-          * (l.otherPlace(p).coordinates.latitude - p.coordinates.latitude);
+      return p.coordinates.latitude + infection * (l.otherPlace(p).coordinates.latitude - p.coordinates.latitude);
     }
   }
 }

@@ -11,9 +11,6 @@ public class LevelTest {
 
   @Test
   public void load() throws IOException {
-    Level l = Level.load(',',
-                         new File("etc/towns"),
-                         new File("etc/roads"));
-    System.out.println(l);
+    System.out.println(Level.load(new File("etc/level.test")));
   }
 }

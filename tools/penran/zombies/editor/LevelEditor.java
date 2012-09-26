@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.sun.javafx.css.Size;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -84,9 +86,9 @@ public class LevelEditor implements Initializable {
 			}
 		});
 		try {
-			Land land = new Land(Level.load(',', new File("etc/towns.csv"),
-					new File("etc/roads.csv")), 800, 350, 20, 20);
+			Land land = new Land(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
 			land.setVisible(true);
+			land.setPrefSize(-1, -1);
 			scene_actual.getChildren().add(land);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

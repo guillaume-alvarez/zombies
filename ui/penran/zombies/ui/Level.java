@@ -4,6 +4,7 @@ import static penran.utils.CSVParser.list;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 import penran.utils.*;
@@ -125,27 +126,27 @@ public class Level {
     towns = Collections.unmodifiableSet(alls);
   }
 
-  public static Level load(int separator, File towns, File roads) throws IOException {
-
-    try (Scanner sct = new Scanner(towns); Scanner scr = new Scanner(roads)) {
-      List<Town> t = list(CSVParser.<Town> builder(Town.class), separator, sct);
-      Map<String, Town> m = Util.asMap(t, Town.class.getDeclaredField("name"));
-      return new Level(list(CSVParser.<Road> builder(new RoadBuilder(m)),
-                            separator,
-                            scr));
+  public static Level load(File folder) throws IOException {
+  	File towns = new File(folder, "towns.csv");
+  	File roads = new File(folder, "roads.csv");
+  	
+		try (Scanner sct = new Scanner(towns); Scanner scr = new Scanner(roads)) {
+			List<Town> t = list(CSVParser.<Town> builder(Town.class), ',', sct);
+			Map<String, Town> m = Util.asMap(t, Town.class.getDeclaredField("name"));
+			return new Level(list(CSVParser.<Road> builder(new RoadBuilder(m)), ',', scr));
     }
     catch (Exception e) {
       throw new IOException("Cannot load data: " + e, e);
     }
   }
 
-  @Override
-  public String toString() {
-    String s = "";
-    for (Road r : roads) {
-      s += r.name + ": " + r.endPoints.get(0).name + " -> "
-          + r.endPoints.get(1).name + "\n";
-    }
-    return s;
-  }
+	@Override
+	public String toString() {
+		String s = "";
+		for (Road r : roads) {
+			s += r.name + ": " + r.endPoints.get(0).name + " -> "
+			    + r.endPoints.get(1).name + "\n";
+		}
+		return s;
+	}
 }

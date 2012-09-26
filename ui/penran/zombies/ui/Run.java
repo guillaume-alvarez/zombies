@@ -15,7 +15,7 @@ public class Run extends Application {
 
   @Override
   public void start(Stage stage) throws Exception {
-    Land land = new Land(Level.load(',', new File("etc/towns.csv"), new File("etc/roads.csv")), 800, 350, 20, 20);
+    Land land = new Land(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
     stage.setScene(new Scene(land));
 
     land.beginGameLoop();

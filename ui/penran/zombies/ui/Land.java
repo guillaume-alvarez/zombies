@@ -19,13 +19,12 @@ import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -37,13 +36,11 @@ import penran.zombies.core.World;
 import penran.zombies.ui.Level.Road;
 import penran.zombies.ui.Level.Town;
 
-public final class Land extends Pane {
+public final class Land extends AnchorPane {
 
   private static final int FRAMES_PER_SECOND = 60;
 
   private static final int TICKS_PER_SECOND = 100;
-
-  private final Rectangle background;
 
   private final Group items;
 
@@ -53,10 +50,6 @@ public final class Land extends Pane {
 
   private final SimpleStringProperty selected = new SimpleStringProperty("");
 
-  private final int marginWidth;
-
-  private final int marginHeight;
-
   private final List<Updateable> toUpdate = new ArrayList<>();
 
   private final Timeline loop;
@@ -64,11 +57,7 @@ public final class Land extends Pane {
   private final World world;
 
   public Land(Level level, int width, int height, int marginWidth, int marginHeight) {
-
-    this.marginWidth = marginWidth;
-    this.marginHeight = marginHeight;
-
-    setPrefSize(width, height);
+    setStyle("-fx-background-color: black");
 
     // create the living objects
     Map<String, Place> places = new HashMap<>();
@@ -76,6 +65,7 @@ public final class Land extends Pane {
       places.put(t.name, new Place(t.name, t.size, t.infected / (double) t.size, new Coordinates(t.latitude,
           t.longitude)));
     }
+    
     List<Link> links = new ArrayList<>();
     for (final Road r : level.roads) {
       Place first = places.get(r.endPoints.get(0).name);
@@ -111,20 +101,16 @@ public final class Land extends Pane {
     for (final Link l : links) {
       roads.getChildren().add(initRoad(l));
     }
-
-    background = new Rectangle(0, 0, width, height);
-    background.setFill(Color.BLACK);
+    
     // city halos and roads should always be visible over infection
     items = new Group(infection, halo, roads, towns);
     items.setManaged(false);
 
-    background.setHeight(height);
-    background.setWidth(width);
-
     Bounds bounds = items.getBoundsInParent();
-    zoom.set(Math.min((background.getWidth() - marginWidth) / bounds.getWidth(),
-        (background.getHeight() - marginHeight - ui.getHeight()) / bounds.getHeight()));
-    items.scaleXProperty().bind(zoom);
+		zoom.set(Math.min((width - marginWidth) / bounds.getWidth(),
+						 			    (height - marginHeight - ui.getHeight()) / bounds.getHeight()));
+		
+		items.scaleXProperty().bind(zoom);
     items.scaleYProperty().bind(zoom);
     items.setTranslateX(-items.getBoundsInParent().getMinX() + marginWidth / 2d - items.getTranslateX());
     items.setTranslateY(-items.getBoundsInParent().getMinY() + ui.getHeight() + marginWidth / 2d
@@ -141,7 +127,7 @@ public final class Land extends Pane {
       }
     });
 
-    getChildren().add(new Group(background, items, ui));
+    getChildren().add(new Group(items, ui));
 
     loop = buildGameLoop();
   }

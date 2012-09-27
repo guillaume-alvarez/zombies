@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
+import javafx.geometry.Point2D;
+
 import penran.utils.*;
 import penran.utils.CSVParser.Builder;
 import penran.utils.CSVParser.Column;
@@ -111,12 +113,24 @@ public class Level {
     }
   }
 
+  public static class PointBuilder {
+    @Builder
+    public Point2D make(@Column("latitude") double latitude,
+                     @Column("longitude") double longitude,
+                     @Column("size") int size) {
+      return new Point2D(latitude, longitude);
+    }
+  }
+
   public final Set<Town> towns;
 
   public final Set<Road> roads;
 
-  public Level(Collection<Road> roads) {
-    this.roads = Collections.unmodifiableSet(new HashSet<>(roads));
+	public final List<Point2D> background;
+
+  public Level(Collection<Road> roads, List<Point2D> background) {
+    this.background = background;
+		this.roads = Collections.unmodifiableSet(new HashSet<>(roads));
     Set<Town> alls = new HashSet<>();
     for (Road r : roads) {
       for (Town t : r.endPoints) {
@@ -129,11 +143,16 @@ public class Level {
   public static Level load(File folder) throws IOException {
   	File towns = new File(folder, "towns.csv");
   	File roads = new File(folder, "roads.csv");
+  	File boundaries = new File(folder, "boundaries.csv");
   	
-		try (Scanner sct = new Scanner(towns); Scanner scr = new Scanner(roads)) {
+		try (Scanner sct = new Scanner(towns); Scanner scr = new Scanner(roads); Scanner bnd = new Scanner(boundaries)) {
 			List<Town> t = list(CSVParser.<Town> builder(Town.class), ',', sct);
 			Map<String, Town> m = Util.asMap(t, Town.class.getDeclaredField("name"));
-			return new Level(list(CSVParser.<Road> builder(new RoadBuilder(m)), ',', scr));
+			List<Road> r = list(CSVParser.<Road> builder(new RoadBuilder(m)), ',', scr);
+
+			List<Point2D>  b = list(CSVParser.<Point2D> builder(new PointBuilder()), ',', bnd);
+
+			return new Level(r, b);
     }
     catch (Exception e) {
       throw new IOException("Cannot load data: " + e, e);

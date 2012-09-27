@@ -85,10 +85,10 @@ public class LevelEditor implements Initializable {
 				Util.die("TODO offers to save before quitting. Ah ah.");
 			}
 		});
+		
 		try {
-			Land land = new Land(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
+			Land land = new Land(Level.load(new File("etc/level.test2")), 800, 350, 20, 20);
 			land.setVisible(true);
-			land.setPrefSize(-1, -1);
 			scene_actual.getChildren().add(land);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

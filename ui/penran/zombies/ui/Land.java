@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.effect.BoxBlur;
@@ -65,7 +66,7 @@ public final class Land extends AnchorPane {
       places.put(t.name, new Place(t.name, t.size, t.infected / (double) t.size, new Coordinates(t.latitude,
           t.longitude)));
     }
-    
+
     List<Link> links = new ArrayList<>();
     for (final Road r : level.roads) {
       Place first = places.get(r.endPoints.get(0).name);
@@ -101,16 +102,19 @@ public final class Land extends AnchorPane {
     for (final Link l : links) {
       roads.getChildren().add(initRoad(l));
     }
-    
+
+    // create the map boundaries
+    Polyline boundary = initBoundary(level.background);
+
     // city halos and roads should always be visible over infection
-    items = new Group(infection, halo, roads, towns);
+    items = new Group(infection, halo, roads, boundary, towns);
     items.setManaged(false);
 
     Bounds bounds = items.getBoundsInParent();
-		zoom.set(Math.min((width - marginWidth) / bounds.getWidth(),
-						 			    (height - marginHeight - ui.getHeight()) / bounds.getHeight()));
-		
-		items.scaleXProperty().bind(zoom);
+    zoom.set(Math.min((width - marginWidth) / bounds.getWidth(),
+        (height - marginHeight - ui.getHeight()) / bounds.getHeight()));
+
+    items.scaleXProperty().bind(zoom);
     items.scaleYProperty().bind(zoom);
     items.setTranslateX(-items.getBoundsInParent().getMinX() + marginWidth / 2d - items.getTranslateX());
     items.setTranslateY(-items.getBoundsInParent().getMinY() + ui.getHeight() + marginWidth / 2d
@@ -206,6 +210,18 @@ public final class Land extends AnchorPane {
     line.setStroke(Color.web("white", 0.8f));
     line.setStrokeWidth(1f);
     return line;
+  }
+
+  private Polyline initBoundary(List<Point2D> background) {
+    final Polyline boundaries = new Polyline();
+    for (Point2D p : background) {
+      boundaries.getPoints().add(p.getY());
+      boundaries.getPoints().add(p.getX());
+    }
+    boundaries.setStrokeType(StrokeType.OUTSIDE);
+    boundaries.setStroke(Color.web("green", 1f));
+    boundaries.setStrokeWidth(0.5f);
+    return boundaries;
   }
 
   /** Start all animations. */

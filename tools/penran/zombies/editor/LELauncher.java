@@ -10,23 +10,22 @@ import javafx.stage.Stage;
 
 public class LELauncher extends Application {
 
-	public static void main(String[] args) {
-		Application.launch(args);
-	}
+  public static void main(String[] args) {
+    Application.launch(args);
+  }
 
-	@Override
-	public void start(Stage stage) throws Exception {
-		FXMLLoader loader = new FXMLLoader(
-				new URL("file:etc/scene-editor.fxml"));
-		loader.setController(new LevelEditor());
-		stage.setScene(new Scene((Parent) loader.load()));
-		stage.show();
-	}
+  @Override
+  public void start(Stage stage) throws Exception {
+    FXMLLoader loader = new FXMLLoader(new URL("file:etc/scene-editor.fxml"));
+    loader.setController(new LevelEditor(stage));
+    stage.setScene(new Scene((Parent) loader.load()));
+    stage.show();
+  }
 
-	@Override
-	public void stop() throws Exception {
-		super.stop();
-		System.exit(0);
-	}
+  @Override
+  public void stop() throws Exception {
+    super.stop();
+    System.exit(0);
+  }
 
 }

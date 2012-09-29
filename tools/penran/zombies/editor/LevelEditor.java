@@ -19,79 +19,106 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import penran.utils.Util;
 import penran.zombies.ui.Land;
 import penran.zombies.ui.Level;
 
 public class LevelEditor implements Initializable {
 
-	@FXML
-	private TextField item_edit_name;
+  @FXML
+  private TextField item_edit_name;
 
-	@FXML
-	private Slider item_edit_size;
+  @FXML
+  private Slider item_edit_size;
 
-	@FXML
-	private TextField item_edit_xcoord;
+  @FXML
+  private TextField item_edit_xcoord;
 
-	@FXML
-	private TextField item_edit_ycoord;
+  @FXML
+  private TextField item_edit_ycoord;
 
-	@FXML
-	private Menu item_menu_delete;
+  @FXML
+  private Menu item_menu_delete;
 
-	@FXML
-	private Menu item_menu_duplicate;
+  @FXML
+  private Menu item_menu_duplicate;
 
-	@FXML
-	private ComboBox<?> road_endpoint;
+  @FXML
+  private ComboBox<?> road_endpoint;
 
-	@FXML
-	private Button road_select_endpoint;
+  @FXML
+  private Button road_select_endpoint;
 
-	@FXML
-	private Button road_select_startpoint;
+  @FXML
+  private Button road_select_startpoint;
 
-	@FXML
-	private ComboBox<?> road_startpoint;
+  @FXML
+  private ComboBox<?> road_startpoint;
 
-	@FXML
-	private MenuItem scene_load;
+  @FXML
+  private MenuItem scene_load;
 
-	@FXML
-	private MenuItem scene_save;
+  @FXML
+  private MenuItem scene_save;
 
-	@FXML
-	private MenuItem scene_save_as;
+  @FXML
+  private MenuItem scene_save_as;
 
-	@FXML
-	private MenuItem scene_close;
+  @FXML
+  private MenuItem scene_close;
 
-	@FXML
-	private GridPane sheet_town;
+  @FXML
+  private GridPane sheet_town;
 
-	@FXML
-	private GridPane sheet_road;
+  @FXML
+  private GridPane sheet_road;
 
-	@FXML
-	private Pane scene_actual;
+  @FXML
+  private Pane scene_actual;
 
-	@Override
-	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-		scene_close.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				System.out.println(event);
-				Util.die("TODO offers to save before quitting. Ah ah.");
-			}
-		});
-		
-		try {
-			Land land = new Land(Level.load(new File("etc/level.test2")), 800, 350, 20, 20);
-			land.setVisible(true);
-			scene_actual.getChildren().add(land);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+  /** The application window. */
+  private Stage stage;
+
+  public LevelEditor(Stage stage) {
+    this.stage = stage;
+  }
+
+  @Override
+  public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
+    scene_close.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        System.out.println(event);
+        Util.die("TODO offers to save before quitting. Ah ah.");
+      }
+    });
+
+    scene_load.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        DirectoryChooser dc = new DirectoryChooser();
+        dc.setTitle("Choose level directory...");
+        dc.setInitialDirectory(new File("etc/"));
+        File dir = dc.showDialog(stage);
+        if (dir != null && dir.isDirectory())
+          loadFile(dir);
+      }
+    });
+
+    loadFile(new File("etc/level.test2"));
+  }
+
+  private void loadFile(File file) {
+    try {
+      Land land = new Land(Level.load(file), 800, 350, 20, 20);
+      land.setVisible(true);
+      scene_actual.getChildren().clear();
+      scene_actual.getChildren().add(land);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 }

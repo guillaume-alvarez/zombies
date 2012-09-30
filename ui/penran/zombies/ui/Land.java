@@ -9,8 +9,10 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.ParallelTransition;
 import javafx.animation.ParallelTransitionBuilder;
 import javafx.animation.ScaleTransition;
+import javafx.animation.ScaleTransitionBuilder;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.animation.TranslateTransition;
@@ -53,8 +55,6 @@ public final class Land extends AnchorPane {
   private final Group items;
 
   private final HBox ui;
-
-  private final SimpleDoubleProperty zoom = new SimpleDoubleProperty(1.0);
 
   private final SimpleStringProperty selected = new SimpleStringProperty("");
 
@@ -118,11 +118,11 @@ public final class Land extends AnchorPane {
     items.setManaged(false);
 
     final Bounds bounds = items.getBoundsInParent();
-    zoom.set(Math.min((width - marginWidth) / bounds.getWidth(),
-        (height - marginHeight - ui.getHeight()) / bounds.getHeight()));
+    final double zoom = Math.min((width - marginWidth) / bounds.getWidth(), (height - marginHeight - ui.getHeight())
+        / bounds.getHeight());
 
-    items.scaleXProperty().bind(zoom);
-    items.scaleYProperty().bind(zoom);
+    items.setScaleX(zoom);
+    items.setScaleY(zoom);
     items.setTranslateX(-items.getBoundsInParent().getMinX() + marginWidth / 2d - items.getTranslateX());
     items.setTranslateY(-items.getBoundsInParent().getMinY() + ui.getHeight() + marginWidth / 2d
         - items.getTranslateY());
@@ -131,23 +131,25 @@ public final class Land extends AnchorPane {
       @Override
       public void handle(ScrollEvent event) {
         // compute the new zoom
-        final double newZoom = Math.min(100.0, Math.max(0.1, zoom.get() + 0.01 * event.getDeltaY()));
-        zoom.set(newZoom);
+        // (constant increment for a mouse wheel step)
+        final double zoom = 0.01 * event.getDeltaY();
+        ScaleTransition scale = ScaleTransitionBuilder.create().duration(new Duration(1000)).byX(zoom).byY(zoom)
+            .build();
 
         // move the center to the new zoomed place
         // (compute different between old group center and mouse pointer)
         final double moveX = (bounds.getMaxX() + bounds.getMinX()) / 2 - event.getSceneX();
         final double moveY = (bounds.getMaxY() + bounds.getMinY()) / 2 - event.getSceneY();
-        TranslateTransitionBuilder.create().duration(new Duration(1000)).node(items).fromX(items.getTranslateX())
-            .fromY(items.getTranslateY()).byX(moveX).byY(moveY).build().play();
+        TranslateTransition translation = TranslateTransitionBuilder.create().duration(new Duration(1000)).node(items)
+            .byX(moveX).byY(moveY).build();
         System.out.printf("Move from (%s,%s) by (%s,%s) because cursor in (%s,%s)\n", items.getTranslateX(),
             items.getTranslateY(), Math.round(moveX), Math.round(moveY), Math.round(event.getSceneX()),
             Math.round(event.getSceneY()));
 
-        // TODO should also be possible to drag'n drop to move the view
-        // thus we will have to include translation
+        new ParallelTransition(items, scale, translation).play();
       }
     });
+    // TODO should also be possible to drag'n drop to move the view
 
     getChildren().add(new Group(items, ui));
 

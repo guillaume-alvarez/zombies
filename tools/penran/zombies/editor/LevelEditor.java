@@ -3,12 +3,14 @@ package penran.zombies.editor;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
@@ -22,6 +24,7 @@ import javafx.stage.Stage;
 import penran.utils.Util;
 import penran.zombies.ui.Land;
 import penran.zombies.ui.Level;
+import penran.zombies.ui.Level.Road;
 
 public class LevelEditor implements Initializable {
 
@@ -54,6 +57,9 @@ public class LevelEditor implements Initializable {
 
   @FXML
   private ComboBox<?> road_startpoint;
+
+  @FXML
+  private MenuItem scene_create;
 
   @FXML
   private MenuItem scene_load;
@@ -93,6 +99,13 @@ public class LevelEditor implements Initializable {
       }
     });
 
+    scene_create.setOnAction(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent event) {
+        loadLevel(new Level(new ArrayList<Road>(), new ArrayList<Point2D>()));
+      }
+    });
+
     scene_load.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -110,12 +123,16 @@ public class LevelEditor implements Initializable {
 
   private void loadFile(File file) {
     try {
-      Land land = new Land(Level.load(file), 800, 350, 20, 20);
-      land.setVisible(true);
-      scene_actual.getChildren().clear();
-      scene_actual.getChildren().add(land);
+      loadLevel(Level.load(file));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private void loadLevel(Level level) {
+    Land land = new Land(level, 800, 350, 20, 20);
+    land.setVisible(true);
+    scene_actual.getChildren().clear();
+    scene_actual.getChildren().add(land);
   }
 }

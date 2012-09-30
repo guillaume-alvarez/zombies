@@ -6,9 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.animation.Animation;
+import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.ParallelTransitionBuilder;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
+import javafx.animation.TranslateTransition;
+import javafx.animation.TranslateTransitionBuilder;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -29,6 +35,7 @@ import javafx.scene.shape.Polyline;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 import javafx.util.Duration;
 import penran.zombies.core.Coordinates;
 import penran.zombies.core.Link;
@@ -110,7 +117,7 @@ public final class Land extends AnchorPane {
     items = new Group(infection, halo, roads, boundary, towns);
     items.setManaged(false);
 
-    Bounds bounds = items.getBoundsInParent();
+    final Bounds bounds = items.getBoundsInParent();
     zoom.set(Math.min((width - marginWidth) / bounds.getWidth(),
         (height - marginHeight - ui.getHeight()) / bounds.getHeight()));
 
@@ -123,9 +130,20 @@ public final class Land extends AnchorPane {
     setOnScroll(new EventHandler<ScrollEvent>() {
       @Override
       public void handle(ScrollEvent event) {
-        double newZoom = zoom.get() + 0.01 * event.getDeltaY();
-        zoom.set(Math.min(100.0, Math.max(0.1, newZoom)));
-        // TODO should zoom to the cursor point, not to the center
+        // compute the new zoom
+        final double newZoom = Math.min(100.0, Math.max(0.1, zoom.get() + 0.01 * event.getDeltaY()));
+        zoom.set(newZoom);
+
+        // move the center to the new zoomed place
+        // (compute different between old group center and mouse pointer)
+        final double moveX = (bounds.getMaxX() + bounds.getMinX()) / 2 - event.getSceneX();
+        final double moveY = (bounds.getMaxY() + bounds.getMinY()) / 2 - event.getSceneY();
+        TranslateTransitionBuilder.create().duration(new Duration(1000)).node(items).fromX(items.getTranslateX())
+            .fromY(items.getTranslateY()).byX(moveX).byY(moveY).build().play();
+        System.out.printf("Move from (%s,%s) by (%s,%s) because cursor in (%s,%s)\n", items.getTranslateX(),
+            items.getTranslateY(), Math.round(moveX), Math.round(moveY), Math.round(event.getSceneX()),
+            Math.round(event.getSceneY()));
+
         // TODO should also be possible to drag'n drop to move the view
         // thus we will have to include translation
       }

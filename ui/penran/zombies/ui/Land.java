@@ -172,9 +172,6 @@ public final class Land extends AnchorPane {
       final double moveY = (bounds.getMaxY() + bounds.getMinY()) / 2 - event.getSceneY();
       TranslateTransition translation = TranslateTransitionBuilder.create().duration(new Duration(1000)).node(items)
           .byX(moveX).byY(moveY).build();
-      System.out.printf("Move from (%s,%s) by (%s,%s) because cursor in (%s,%s)\n", items.getTranslateX(),
-          items.getTranslateY(), Math.round(moveX), Math.round(moveY), Math.round(event.getSceneX()),
-          Math.round(event.getSceneY()));
 
       new ParallelTransition(items, scale, translation).play();
     }

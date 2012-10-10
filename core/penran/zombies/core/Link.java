@@ -16,9 +16,6 @@ import java.util.Comparator;
  */
 public final class Link {
 
-  /** Distance the infection progresses by tick, here 0.1km. */
-  private static final double INFECTION_PROGRESS = 0.1;
-
   public final Place p1;
 
   public final Place p2;
@@ -62,11 +59,11 @@ public final class Link {
   }
 
   /** Make the infection progress through the link. */
-  /* package */double addProgress(Place p) {
+  /* package */double addProgress(Place p, double progress) {
     if (p == p1)
-      return progressFromP1 = Math.max(0.0, Math.min(distance, progressFromP1 + INFECTION_PROGRESS));
+      return progressFromP1 = Math.max(0.0, Math.min(distance, progressFromP1 + progress));
     else if (p == p2)
-      return progressFromP2 = Math.max(0.0, Math.min(distance, progressFromP2 + INFECTION_PROGRESS));
+      return progressFromP2 = Math.max(0.0, Math.min(distance, progressFromP2 + progress));
     else
       throw new IllegalStateException("Unknown place " + p + " for " + this);
   }

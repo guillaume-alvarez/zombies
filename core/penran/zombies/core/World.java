@@ -36,7 +36,7 @@ public final class World {
 
     for (Place p : places.values())
       if (p.hasZombies())
-        agents.add(new PlaceContamination(p));
+        addAgent(new PlaceContamination(p));
 
     thread = new Thread(new Runnable() {
       @Override

@@ -8,8 +8,8 @@ package penran.zombies.core;
  */
 public final class LinkContamination implements GameAgent {
 
-  /** Road contamination rate, here 0.01%. */
-  private static final double CONTAMINATION_RATE = 0.0001;
+  /** Distance the infection progresses by tick, here 0.1km. */
+  private static final double INFECTION_PROGRESS = 0.1;
 
   private Link l;
 
@@ -25,12 +25,18 @@ public final class LinkContamination implements GameAgent {
 
   @Override
   public boolean tick(World world) {
-    if (l.addProgress(source) < l.distance)
+    if (l.addProgress(source, INFECTION_PROGRESS) < l.distance)
       return true;
 
     // finished contamination
-    world.addAgent(new PlaceContamination(target));
+    if (target.getZombies() < 1.0)
+      world.addAgent(new PlaceContamination(target));
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return "Contaminate[" + source + "=>" + target + "]";
   }
 
 }

@@ -23,9 +23,16 @@ public final class PlaceContamination implements GameAgent {
       return true;
 
     // finished contamination
-    for (Link l : p)
-      world.addAgent(new LinkContamination(l, p, l.otherPlace(p)));
+    for (Link l : p) {
+      if (l.getProgressFrom(p) < l.distance)
+        world.addAgent(new LinkContamination(l, p, l.otherPlace(p)));
+    }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return "Contaminate[" + p + "]";
   }
 
 }

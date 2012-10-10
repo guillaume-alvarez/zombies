@@ -12,9 +12,9 @@ import javafx.scene.shape.StrokeType;
  * 
  * @author Guillaume Alvarez
  */
-public final class Boundaries extends Polyline {
+public final class Boundary extends Polyline {
 
-  public Boundaries(List<Point2D> background) {
+  public Boundary(List<Point2D> background) {
     super();
     for (Point2D p : background) {
       getPoints().add(p.getY());

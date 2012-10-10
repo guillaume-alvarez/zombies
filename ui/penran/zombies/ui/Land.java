@@ -35,7 +35,7 @@ import penran.zombies.core.Place;
 import penran.zombies.core.World;
 import penran.zombies.ui.Level.Road;
 import penran.zombies.ui.Level.Town;
-import penran.zombies.ui.objects.Boundaries;
+import penran.zombies.ui.objects.Boundary;
 import penran.zombies.ui.objects.City;
 import penran.zombies.ui.objects.Infection;
 
@@ -96,7 +96,7 @@ public final class Land extends AnchorPane {
     }
 
     // create the map boundaries
-    Polyline boundary = new Boundaries(level.background);
+    Polyline boundary = new Boundary(level.background);
 
     // city halos and roads should always be visible over infection
     items = new Group(infection, roads, boundary, towns);

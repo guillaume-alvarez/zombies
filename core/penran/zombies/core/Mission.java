@@ -5,16 +5,11 @@ package penran.zombies.core;
  * 
  * @author Guillaume Alvarez
  */
-public interface Mission {
+public interface Mission extends GameAgent {
 
-	/**
-	 * Called to make the mission progress one tick later.
-	 */
-	void tick();
-
-	/**
-	 * Stops the mission.
-	 */
-	void stops();
+  /**
+   * Stops the mission.
+   */
+  void stops();
 
 }

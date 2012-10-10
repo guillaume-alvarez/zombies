@@ -62,7 +62,7 @@ public final class Link {
   }
 
   /** Make the infection progress through the link. */
-  double addProgress(Place p) {
+  /* package */double addProgress(Place p) {
     if (p == p1)
       return progressFromP1 = Math.max(0.0, Math.min(distance, progressFromP1 + INFECTION_PROGRESS));
     else if (p == p2)
@@ -71,7 +71,7 @@ public final class Link {
       throw new IllegalStateException("Unknown place " + p + " for " + this);
   }
 
-  void removeProgress(Place p) {
+  /* package */void removeProgress(Place p) {
     if (p == p1)
       progressFromP1 = 0.0;
     else if (p == p2)

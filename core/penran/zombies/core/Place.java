@@ -12,10 +12,7 @@ import java.util.List;
  * 
  * @author Guillaume Alvarez
  */
-public final class Place implements GameObject, Iterable<Link> {
-
-  /** City contamination rate, here 0.01%. */
-  private static final double CONTAMINATION_RATE = 0.0001;
+public final class Place implements Iterable<Link> {
 
   public final String name;
 
@@ -80,29 +77,12 @@ public final class Place implements GameObject, Iterable<Link> {
    * Add a percentage to current zombie presence. The percentage can be negative
    * to remove zombies from the city.
    */
-  void addZombies(double percent) {
+  /* package */double addZombies(double percent) {
     if (percent > 0)
       zombies = Math.min(1.0, zombies + percent);
     else if (percent < 0)
       zombies = Math.max(0.0, zombies + percent);
-  }
-
-  /** If there are zombies, they gain 0.01% per turn. */
-  @Override
-  public void tick() {
-    if (zombies >= 1.0)
-      // contaminate links
-      for (Link l : links) {
-        if (l.addProgress(this) >= l.distance)
-          l.otherPlace(this).addZombies(CONTAMINATION_RATE);
-      }
-    else if (zombies > 0.0)
-      // increase contamination in city
-      addZombies(CONTAMINATION_RATE);
-    else
-      // links should not be infected
-      for (Link l : links)
-        l.removeProgress(this);
+    return zombies;
   }
 
   @Override

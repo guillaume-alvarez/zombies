@@ -1,6 +1,7 @@
 package penran.zombies.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -9,13 +10,19 @@ import java.util.Map;
  * 
  * @author Guillaume Alvarez
  */
-public class World {
+public final class World {
 
   private final Map<String, Place> places;
 
   private final List<Link> links;
 
-  private final List<GameObject> objects = new ArrayList<>();
+  /**
+   * Contains all acting objects. It should be synchronized on itself when
+   * accessed.
+   */
+  private final List<GameAgent> agents = new ArrayList<>();
+
+  private final List<GameAgent> forNextTick = new ArrayList<>();
 
   private final Thread thread;
 
@@ -26,7 +33,10 @@ public class World {
   public World(Map<String, Place> places, List<Link> links) {
     this.places = places;
     this.links = links;
-    objects.addAll(places.values());
+
+    for (Place p : places.values())
+      if (p.hasZombies())
+        agents.add(new PlaceContamination(p));
 
     thread = new Thread(new Runnable() {
       @Override
@@ -41,6 +51,12 @@ public class World {
     this.tick = tick;
     this.started = true;
     thread.start();
+  }
+
+  public void addAgent(GameAgent ga) {
+    synchronized (agents) {
+      forNextTick.add(ga);
+    }
   }
 
   /** Get a global contamination percentage. */
@@ -68,8 +84,13 @@ public class World {
     while (started) {
       waitTick(nextTick);
       nextTick = System.currentTimeMillis() + tick;
-      for (GameObject o : objects)
-        o.tick();
+      synchronized (agents) {
+        agents.addAll(forNextTick);
+        forNextTick.clear();
+        for (Iterator<GameAgent> it = agents.iterator(); it.hasNext();)
+          if (!it.next().tick(this))
+            it.remove();
+      }
     }
   }
 

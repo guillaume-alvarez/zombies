@@ -1,6 +1,7 @@
 package penran.zombies.ui.objects;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -21,7 +22,7 @@ public class City extends Group implements Updateable {
 
   private final Circle circle;
 
-  public City(Place place, SimpleStringProperty selected) {
+  public City(Place place, StringProperty selected) {
     this.place = place;
     getChildren().add(initHalo(place));
     // add circle after halo
@@ -29,7 +30,7 @@ public class City extends Group implements Updateable {
     getChildren().add(circle);
   }
 
-  private Circle initTown(final Place p, final SimpleStringProperty selected) {
+  private Circle initTown(final Place p, final StringProperty selected) {
     // draw the city
     final double radius = p.size / 2d;
     final int ift = (int) Math.round(255 * p.getZombies());

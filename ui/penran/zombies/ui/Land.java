@@ -38,6 +38,7 @@ import penran.zombies.ui.Level.Town;
 import penran.zombies.ui.objects.Boundary;
 import penran.zombies.ui.objects.City;
 import penran.zombies.ui.objects.Infection;
+import penran.zombies.ui.objects.TopBar;
 
 public final class Land extends AnchorPane {
 
@@ -47,9 +48,7 @@ public final class Land extends AnchorPane {
 
   private final Group items;
 
-  private final HBox ui;
-
-  private final SimpleStringProperty selected = new SimpleStringProperty("");
+  private final TopBar ui;
 
   private final List<Updateable> toUpdate = new ArrayList<>();
 
@@ -77,13 +76,13 @@ public final class Land extends AnchorPane {
     world = new World(places, links);
 
     // create simple UI
-    ui = initUI();
+    ui = new TopBar(world);
 
     // create the towns
     Group towns = new Group();
     Group infection = new Group();
     for (final Place p : places.values()) {
-      towns.getChildren().add(update(new City(p, selected)));
+      towns.getChildren().add(update(new City(p, ui.getSelected())));
       infection.getChildren().add(update(new Infection(p)));
     }
     infection.setEffect(new BoxBlur(5, 5, 3));
@@ -92,7 +91,7 @@ public final class Land extends AnchorPane {
     // create the roads
     Group roads = new Group();
     for (final Link l : links) {
-      roads.getChildren().add(new penran.zombies.ui.objects.Road(l, selected));
+      roads.getChildren().add(new penran.zombies.ui.objects.Road(l, ui.getSelected()));
     }
 
     // create the map boundaries
@@ -103,47 +102,21 @@ public final class Land extends AnchorPane {
     items.setManaged(false);
 
     final Bounds bounds = items.getBoundsInParent();
-    final double zoom = Math.min((width - marginWidth) / bounds.getWidth(), (height - marginHeight - ui.getHeight())
-        / bounds.getHeight());
+    final double zoom = Math.min((width - marginWidth) / bounds.getWidth(), (height - marginHeight - ui
+        .getGraphicalNode().getHeight()) / bounds.getHeight());
 
     items.setScaleX(zoom);
     items.setScaleY(zoom);
     items.setTranslateX(-items.getBoundsInParent().getMinX() + marginWidth / 2d - items.getTranslateX());
-    items.setTranslateY(-items.getBoundsInParent().getMinY() + ui.getHeight() + marginWidth / 2d
+    items.setTranslateY(-items.getBoundsInParent().getMinY() + ui.getGraphicalNode().getHeight() + marginWidth / 2d
         - items.getTranslateY());
 
     setOnScroll(new ZoomHandler(bounds));
     // TODO should also be possible to drag'n drop to move the view
 
-    getChildren().add(new Group(items, ui));
+    getChildren().add(new Group(items, ui.getGraphicalNode()));
 
     loop = buildGameLoop();
-  }
-
-  private HBox initUI() {
-    final HBox ui = new HBox(10);
-    ui.setFillHeight(true);
-    final Font font = Font.font("arial", 20);
-
-    final Label global = new Label("Infection: 0%");
-    toUpdate.add(new Updateable() {
-      @Override
-      public void update() {
-        global.setText("Infection: " + Math.round(world.getContamination() * 100.0) + "%");
-      }
-    });
-    global.setTextFill(Color.WHITE);
-    global.setFont(font);
-    ui.getChildren().add(global);
-
-    final Text text = new Text(0, 0, "");
-    text.textProperty().bind(selected);
-    text.setFill(Color.WHITE);
-    text.setFont(font);
-    text.setY(font.getSize());
-    ui.getChildren().add(text);
-
-    return ui;
   }
 
   private <T extends Updateable> T update(T t) {

@@ -76,7 +76,7 @@ public final class Land extends AnchorPane {
     world = new World(places, links);
 
     // create simple UI
-    ui = new TopBar(world);
+    ui = update(new TopBar(world));
 
     // create the towns
     Group towns = new Group();

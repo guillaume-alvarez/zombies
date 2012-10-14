@@ -4,14 +4,21 @@ import static penran.utils.CSVParser.list;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 
 import javafx.geometry.Point2D;
-
-import penran.utils.*;
+import penran.utils.CSVParser;
 import penran.utils.CSVParser.Builder;
 import penran.utils.CSVParser.Column;
+import penran.utils.Util;
 
 /**
  * Temporary representation of a level to use for initial dev of the main view.

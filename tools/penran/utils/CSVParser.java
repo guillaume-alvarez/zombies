@@ -1,9 +1,15 @@
 package penran.utils;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Parse a CSV file into object. This is done by providing a factory, by

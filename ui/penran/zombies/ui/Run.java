@@ -3,10 +3,8 @@ package penran.zombies.ui;
 import java.io.File;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class Run extends Application {
   public static void main(String[] args) {

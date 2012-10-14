@@ -1,8 +1,7 @@
 package penran.zombies.core;
 
-import static java.lang.Math.*;
-
-import java.util.Comparator;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
 /**
  * Link between two places.

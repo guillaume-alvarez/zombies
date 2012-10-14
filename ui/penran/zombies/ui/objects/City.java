@@ -1,6 +1,5 @@
 package penran.zombies.ui.objects;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -16,18 +15,21 @@ import penran.zombies.ui.Updateable;
  * 
  * @author Guillaume Alvarez
  */
-public class City extends Group implements Updateable {
+public final class City implements Updateable {
 
   private final Place place;
 
   private final Circle circle;
 
+  private final Group group;
+
   public City(Place place, StringProperty selected) {
     this.place = place;
-    getChildren().add(initHalo(place));
+    this.group = new Group();
+    group.getChildren().add(initHalo(place));
     // add circle after halo
     this.circle = initTown(place, selected);
-    getChildren().add(circle);
+    group.getChildren().add(circle);
   }
 
   private Circle initTown(final Place p, final StringProperty selected) {
@@ -53,6 +55,10 @@ public class City extends Group implements Updateable {
     bound.setStroke(Color.web("white", 1));
     bound.setStrokeWidth(2f);
     return bound;
+  }
+
+  public Group getGraphicalNode() {
+    return group;
   }
 
   @Override

@@ -13,12 +13,14 @@ import penran.zombies.core.Link;
  * 
  * @author Guillaume Alvarez
  */
-public final class Road extends Polyline {
+public final class Road {
+
+  private final Polyline line;
 
   public Road(final Link link, final StringProperty selected) {
-    super(new double[] { link.p1.coordinates.longitude, link.p1.coordinates.latitude, link.p2.coordinates.longitude,
-        link.p2.coordinates.latitude });
-    setOnMouseClicked(new EventHandler<Event>() {
+    this.line = new Polyline(new double[] { link.p1.coordinates.longitude, link.p1.coordinates.latitude,
+        link.p2.coordinates.longitude, link.p2.coordinates.latitude });
+    line.setOnMouseClicked(new EventHandler<Event>() {
       @Override
       public void handle(Event paramT) {
         selected.setValue(String.format(
@@ -28,9 +30,13 @@ public final class Road extends Polyline {
       }
     });
 
-    setStrokeType(StrokeType.OUTSIDE);
-    setStroke(Color.web("white", 0.8f));
-    setStrokeWidth(1f);
+    line.setStrokeType(StrokeType.OUTSIDE);
+    line.setStroke(Color.web("white", 0.8f));
+    line.setStrokeWidth(1f);
+  }
+
+  public Polyline getGraphicalNode() {
+    return line;
   }
 
 }

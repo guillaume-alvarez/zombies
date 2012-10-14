@@ -1,7 +1,6 @@
 package penran.zombies.ui.objects;
 
 import javafx.beans.property.StringProperty;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -10,7 +9,7 @@ import javafx.scene.text.Text;
 import penran.zombies.core.World;
 import penran.zombies.ui.Updateable;
 
-public class TopBar implements Updateable {
+public final class TopBar implements Updateable {
 
   private final HBox box;
 
@@ -18,7 +17,7 @@ public class TopBar implements Updateable {
 
   private final Label global;
 
-  private World world;
+  private final World world;
 
   public TopBar(World world) {
     this.world = world;

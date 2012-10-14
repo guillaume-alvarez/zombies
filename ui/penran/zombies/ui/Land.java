@@ -82,8 +82,8 @@ public final class Land extends AnchorPane {
     Group towns = new Group();
     Group infection = new Group();
     for (final Place p : places.values()) {
-      towns.getChildren().add(update(new City(p, ui.getSelected())));
-      infection.getChildren().add(update(new Infection(p)));
+      towns.getChildren().add(update(new City(p, ui.getSelected())).getGraphicalNode());
+      infection.getChildren().add(update(new Infection(p)).getGraphicalNode());
     }
     infection.setEffect(new BoxBlur(5, 5, 3));
     towns.setEffect(new BoxBlur(2, 2, 2));
@@ -91,14 +91,11 @@ public final class Land extends AnchorPane {
     // create the roads
     Group roads = new Group();
     for (final Link l : links) {
-      roads.getChildren().add(new penran.zombies.ui.objects.Road(l, ui.getSelected()));
+      roads.getChildren().add(new penran.zombies.ui.objects.Road(l, ui.getSelected()).getGraphicalNode());
     }
 
-    // create the map boundaries
-    Polyline boundary = new Boundary(level.background);
-
     // city halos and roads should always be visible over infection
-    items = new Group(infection, roads, boundary, towns);
+    items = new Group(infection, roads, new Boundary(level.background).getGraphicalNode(), towns);
     items.setManaged(false);
 
     final Bounds bounds = items.getBoundsInParent();

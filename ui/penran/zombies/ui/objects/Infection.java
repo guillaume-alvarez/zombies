@@ -14,12 +14,19 @@ import penran.zombies.ui.Updateable;
  * 
  * @author Guillaume Alvarez
  */
-public class Infection extends Polygon implements Updateable {
+public final class Infection implements Updateable {
 
   private final Place place;
 
+  private final Polygon poly;
+
   public Infection(Place place) {
+    this.poly = new Polygon();
     this.place = place;
+  }
+
+  public Polygon getGraphicalNode() {
+    return poly;
   }
 
   @Override
@@ -42,14 +49,14 @@ public class Infection extends Polygon implements Updateable {
         points.add(place.coordinates.longitude);
         points.add(place.coordinates.latitude);
       }
-      getPoints().setAll(points);
-      setFill(color);
+      poly.getPoints().setAll(points);
+      poly.setFill(color);
     } else if (zombies <= 0.0)
       // no longer any contamination
-      getPoints().clear();
+      poly.getPoints().clear();
     else
       // just update the color from the city one
-      setFill(color);
+      poly.setFill(color);
   }
 
   private static Double infectionPointLongitude(Place p, Link l, double infection) {

@@ -14,7 +14,9 @@ public class Run extends Application {
   @Override
   public void start(Stage stage) throws Exception {
     Land land = new Land(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
-    stage.setScene(new Scene(land));
+    Scene scene = new Scene(land);
+    scene.getStylesheets().add(this.getClass().getResource("stylesheet.css").toExternalForm());
+    stage.setScene(scene);
 
     land.beginGameLoop();
 

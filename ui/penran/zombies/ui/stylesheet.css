@@ -1,0 +1,19 @@
+#portrait-medic {
+  -fx-text-fill:black;
+  -fx-font-family:"arial";
+  -fx-font-size:10px;
+  -fx-font-weight:bold;
+  -fx-background-color:blue;
+  -fx-border-radius: 2;
+  -fx-padding: 3 3 3 3;
+}
+
+#portrait-soldier {
+  -fx-text-fill:black;
+  -fx-font-family:"arial";
+  -fx-font-size:10px;
+  -fx-font-weight:bold;
+  -fx-background-color:green;
+  -fx-border-radius: 2;
+  -fx-padding: 3 3 3 3;
+}

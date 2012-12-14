@@ -1,6 +1,7 @@
 package penran.zombies.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ public final class World {
    * accessed.
    */
   private final List<GameAgent> agents = new ArrayList<>();
+
+  private final Map<String, Character> characters = new HashMap<>();
 
   private final List<GameAgent> forNextTick = new ArrayList<>();
 
@@ -81,6 +84,16 @@ public final class World {
     return Math.max(0.0, Math.min(1.0, contaminated / size));
   }
 
+  /** Get the list of all defined characters. */
+  public Map<String, Character> getCharacters() {
+    return characters;
+  }
+
+  /** Register a new character. */
+  public void addCharacter(Character character) {
+    characters.put(character.getName(), character);
+  }
+
   /** Default speed is 1.0, 2.0 is two times faster, 0.0 is paused. */
   public void setSpeed(double speed) {
     synchronized (paused) {
@@ -139,4 +152,5 @@ public final class World {
     } else
       System.out.println("Late by " + (-toWait) + "ms.");
   }
+
 }

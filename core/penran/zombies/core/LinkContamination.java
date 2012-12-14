@@ -29,8 +29,12 @@ public final class LinkContamination implements GameAgent {
       return true;
 
     // finished contamination
-    if (target.getZombies() < 1.0)
+    if (target.getZombies() < 1.0) {
       world.addAgent(new PlaceContamination(target));
+      if (target.getZombies() == 0.0)
+        // create character concerned by the city
+        world.addCharacter(Character.generateRandom());
+    }
     return false;
   }
 

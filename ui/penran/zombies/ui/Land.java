@@ -21,6 +21,9 @@ import javafx.scene.Group;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Polyline;
 import javafx.util.Duration;
 import penran.zombies.core.Coordinates;
 import penran.zombies.core.Link;
@@ -29,11 +32,12 @@ import penran.zombies.core.World;
 import penran.zombies.ui.Level.Road;
 import penran.zombies.ui.Level.Town;
 import penran.zombies.ui.objects.Boundary;
+import penran.zombies.ui.objects.Characters;
 import penran.zombies.ui.objects.City;
 import penran.zombies.ui.objects.Infection;
 import penran.zombies.ui.objects.TopBar;
 
-public final class Land extends AnchorPane {
+public final class Land extends BorderPane {
 
   private static final int FRAMES_PER_SECOND = 60;
 
@@ -88,7 +92,8 @@ public final class Land extends AnchorPane {
     }
 
     // city halos and roads should always be visible over infection
-    items = new Group(infection, roads, new Boundary(level.background).getGraphicalNode(), towns);
+    Polyline boundary = new Boundary(level.background).getGraphicalNode();
+    items = new Group(infection, roads, boundary, towns);
     items.setManaged(false);
 
     final Bounds bounds = items.getBoundsInParent();
@@ -104,7 +109,11 @@ public final class Land extends AnchorPane {
     setOnScroll(new ZoomHandler(bounds));
     // TODO should also be possible to drag'n drop to move the view
 
-    getChildren().add(new Group(items, ui.getGraphicalNode()));
+    VBox characters = update(new Characters(world)).getGraphicalNode();
+    
+    setCenter(items);
+    setTop(ui.getGraphicalNode());
+    setRight(characters);
 
     loop = buildGameLoop();
   }

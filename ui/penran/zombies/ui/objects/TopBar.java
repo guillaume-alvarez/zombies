@@ -11,6 +11,8 @@ import penran.zombies.ui.Updateable;
 
 public final class TopBar implements Updateable {
 
+  private static final Font FONT = Font.font("arial", 20);
+
   private final HBox box;
 
   private final Text text;
@@ -24,17 +26,16 @@ public final class TopBar implements Updateable {
 
     box = new HBox(10);
     box.setFillHeight(true);
-    final Font font = Font.font("arial", 20);
 
     global = new Label("Infection: 0%");
     global.setTextFill(Color.WHITE);
-    global.setFont(font);
+    global.setFont(FONT);
     box.getChildren().add(global);
 
     text = new Text(0, 0, "");
     text.setFill(Color.WHITE);
-    text.setFont(font);
-    text.setY(font.getSize());
+    text.setFont(FONT);
+    text.setY(FONT.getSize());
     box.getChildren().add(text);
   }
 

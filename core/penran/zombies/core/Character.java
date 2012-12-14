@@ -1,5 +1,7 @@
 package penran.zombies.core;
 
+import java.util.Random;
+
 /**
  * Represents a character the player can give orders to. Situated in a place it
  * can do different missions depending on its type.
@@ -66,5 +68,21 @@ public final class Character {
       mission.stops();
       mission = null;
     }
+  }
+
+  private static final Random rand = new Random();
+
+  private static final String[] chars = new String[26];
+
+  static {
+    for (int i = 0; i < 26; i++)
+      chars[i] = String.valueOf((char) ('a' + i));
+  }
+
+  public static Character generateRandom() {
+    Type[] types = Type.values();
+    // TODO replace with a list of names
+    return new Character(chars[rand.nextInt(26)] + chars[rand.nextInt(26)] + chars[rand.nextInt(26)],
+        types[rand.nextInt(types.length)]);
   }
 }

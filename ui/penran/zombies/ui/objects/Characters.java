@@ -24,8 +24,10 @@ public final class Characters implements Updateable {
     this.world = world;
 
     box = new VBox(4);
-    box.setFillWidth(false);
-    box.setMaxWidth(50);
+    box.setFillWidth(true);
+    box.setMinWidth(60);
+    box.setPrefWidth(60);
+    box.setMaxWidth(60);
     box.setOpacity(0.9);
     box.setAlignment(Pos.TOP_RIGHT);
   }
@@ -58,6 +60,8 @@ public final class Characters implements Updateable {
 
       button = new Button(character.getName() + "\n" + character.getType());
       button.setId("portrait-" + character.getType().name().toLowerCase());
+      // permit all buttons to fill the bow width
+      button.setMaxWidth(Double.MAX_VALUE);
     }
 
   }

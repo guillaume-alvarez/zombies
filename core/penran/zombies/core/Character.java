@@ -46,7 +46,7 @@ public final class Character {
   }
 
   /**
-   * Gives a mission to the character. Returns fales if the character already
+   * Gives a mission to the character. Returns false if the character already
    * has one.
    */
   public boolean givesMission(Mission mission) {

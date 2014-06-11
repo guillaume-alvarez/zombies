@@ -35,6 +35,7 @@ public class Run extends Application {
     land.setOnMouseMoved(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
+        // TODO convert to coordinates in the map (to ease edition and debugging)
         tech.setText("Longitude: " + event.getSceneX() + ", latitude: " + event.getSceneY());
       }
     });

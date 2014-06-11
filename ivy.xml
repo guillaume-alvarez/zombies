@@ -25,6 +25,6 @@
         status="integration">
 	</info>
 	<dependencies>
-       <dependency org="ch.qos.logback" name="logback-classic" rev="1.0.2"/>
+       <dependency org="ch.qos.logback" name="logback-classic" rev="1.1.2"/>
 	</dependencies>
 </ivy-module>

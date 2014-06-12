@@ -2,8 +2,11 @@ package penran.zombies.ui;
 
 import java.io.File;
 
+import penran.zombies.core.Coordinates;
+
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -26,7 +29,7 @@ public class Run extends Application {
     stage.show();
 
     // load game data and populate display
-    Land land = new Land(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
+    final Land land = new Land(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
     layout.setCenter(land);
 
     // publish some technical information (mouse, fps...)
@@ -35,8 +38,8 @@ public class Run extends Application {
     land.setOnMouseMoved(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
-        // TODO convert to coordinates in the map (to ease edition and debugging)
-        tech.setText("Longitude: " + event.getSceneX() + ", latitude: " + event.getSceneY());
+        Coordinates c = land.getCoordinates(event.getSceneX(), event.getSceneY());
+        tech.setText("Longitude: " + c.longitude + ", latitude: " + c.latitude);
       }
     });
     layout.setBottom(tech);

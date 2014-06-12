@@ -17,6 +17,7 @@ import javafx.animation.TranslateTransitionBuilder;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.ScrollEvent;
@@ -110,7 +111,7 @@ public final class Land extends BorderPane {
     // TODO should also be possible to drag'n drop to move the view
 
     VBox characters = update(new Characters(world)).getGraphicalNode();
-    
+
     setCenter(items);
     setTop(ui.getGraphicalNode());
     setRight(characters);
@@ -168,6 +169,11 @@ public final class Land extends BorderPane {
 
     // creates the game world's game loop (Timeline)
     return TimelineBuilder.create().cycleCount(Animation.INDEFINITE).keyFrames(oneFrame).build();
+  }
+
+  public Coordinates getCoordinates(double x, double y) {
+    Point2D p = items.sceneToLocal(x, y);
+    return new Coordinates(p.getY(), p.getX());
   }
 
 }

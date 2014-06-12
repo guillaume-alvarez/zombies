@@ -1,6 +1,5 @@
 package penran.utils;
 
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Various utilities methods.
- *
+ * 
  * @author gaetan
  */
 public class Util {
@@ -40,27 +39,23 @@ public class Util {
    * <p>
    * This methods was created to alleviate the amount of boiler plate that is
    * required to generate a map from an enum:
-   *
+   * 
    * <pre>
    * enum E {
    *   A(-1), B(2), C(4);
    *   public final int value;
    *   E(int i) { value = i; }
-   *
+   * 
    *   private static final fromId = makMapping(E.class, "value");
    * }
    * ...
    * E var = E.fromId(2); // var == B;
    * </pre>
-   *
-   * @param <T>
-   *          Key type.
-   * @param <X>
-   *          The enum type.
-   * @param c
-   *          The class of the enum.
-   * @param acc
-   *          The field or method name. In either case, it should be a public
+   * 
+   * @param <T> Key type.
+   * @param <X> The enum type.
+   * @param c The class of the enum.
+   * @param acc The field or method name. In either case, it should be a public
    *          member, and if it is a method, it should have no parameters.
    * @return An unmodifiable mapping.
    */
@@ -71,26 +66,20 @@ public class Util {
       Method m = c.getMethod(acc.trim());
       for (X e : c.getEnumConstants())
         r.put((T) m.invoke(e), e);
-    }
-    catch (NoSuchMethodException ex) {
+    } catch (NoSuchMethodException ex) {
       try {
         Field f = c.getField(acc.trim());
         if (f != null) {
           for (X e : c.getEnumConstants())
             r.put((T) f.get(e), e);
         }
-      }
-      catch (NoSuchFieldException e) {
+      } catch (NoSuchFieldException e) {
         throw new IllegalArgumentException("No field or method names " + acc);
+      } catch (Exception e) {
+        throw new IllegalArgumentException("Error while accessing data using field " + acc);
       }
-      catch (Exception e) {
-        throw new IllegalArgumentException("Error while accessing data using field "
-                                           + acc);
-      }
-    }
-    catch (Exception e) {
-      throw new IllegalArgumentException("Error while accessing data using method "
-                                         + acc);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error while accessing data using method " + acc);
     }
     return Collections.unmodifiableMap(r);
   }
@@ -100,15 +89,30 @@ public class Util {
    * method calling it...
    * <p>
    * For instance:
-   *
+   * 
    * <pre>
    * package gv.commons;
-   *
+   * 
    * import static gv.util.Util.logger;
-   *
+   * 
    * class MyClass {
    *   private static Logger l = logger(); // category of &quot;l&quot; is &quot;gv.commons.MyClass&quot;
    * };
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * </pre>
+   * 
    * @return A logger, corresponding to the class of the method calling this.
    */
   public static Logger logger() {
@@ -134,42 +138,38 @@ public class Util {
   /**
    * Try to acquire a working set directory, and register an hook to get the
    * corresponding lock file removed on shutdown.
-   *
-   * @param workingDir
-   *          Directory where the application will lay its data.
-   * @param applog
-   *          A logger where additional additional information about failure may
-   *          go.
+   * 
+   * @param workingDir Directory where the application will lay its data.
+   * @param applog A logger where additional additional information about
+   *          failure may go.
    * @throws IOException
    */
-  public static void acquireWorkingDirectory(final File workingDir,
-                                             final Logger applog)
-    throws IOException {
+  public static void acquireWorkingDirectory(final File workingDir, final Logger applog) throws IOException {
     final File lockFile = new File(workingDir, "lock");
-    final FileLock lock = new RandomAccessFile(lockFile, "rw").getChannel().tryLock();
-    if (lock == null)
-      throw new IOException("Another instance is already using the working dir "
-                            + workingDir);
+    try (RandomAccessFile file = new RandomAccessFile(lockFile, "rw")) {
+      final FileLock lock = file.getChannel().tryLock();
+      if (lock == null)
+        throw new IOException("Another instance is already using the working dir " + workingDir);
 
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        try {
-          lock.release();
-          lock.channel().close();
-          lockFile.delete();
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+        public void run() {
+          try {
+            lock.release();
+            lock.channel().close();
+            lockFile.delete();
+          } catch (IOException e) {
+            applog.error("Could not release lock on working dir " + workingDir);
+          }
         }
-        catch (IOException e) {
-          applog.error("Could not release lock on working dir " + workingDir);
-        }
-      }
-    });
+      });
+    }
   }
 
   /**
    * Convert an array of value into a set.
    */
-  public static <T> Set<T> asSet(T... v) {
+  public static <T> Set<T> asSet(T ... v) {
     Set<T> s = new HashSet<T>();
     for (T t : v)
       s.add(t);
@@ -192,11 +192,16 @@ public class Util {
   }
 
   /**
-   * Convert a list of element into a map using the parameter field as a key extractor.
-   *
+   * Convert a list of element into a map using the parameter field as a key
+   * extractor.
+   * 
    * @param values The list of values for the map.
    * @param keyField The key field used for the mapping.
-   * @return A map containing <pre>{v[keyField] -> v | v : values}</pre>
+   * @return A map containing
+   * 
+   *         <pre>
+   * {v[keyField] -> v | v : values}
+   * </pre>
    * @throws IllegalArgumentException If an error occurs while using keyField.
    */
   public static <K, V> Map<K, V> asMap(List<V> values, Field keyField) throws IllegalArgumentException {
@@ -204,10 +209,8 @@ public class Util {
     for (V v : values) {
       try {
         r.put((K) keyField.get(v), v);
-      }
-      catch (IllegalAccessException e) {
-        throw new IllegalArgumentException("Field " + keyField
-            + " is not accessible in " + v);
+      } catch (IllegalAccessException e) {
+        throw new IllegalArgumentException("Field " + keyField + " is not accessible in " + v);
       }
     }
     return r;

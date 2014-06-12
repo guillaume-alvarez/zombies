@@ -34,7 +34,7 @@ import penran.zombies.ui.objects.City;
 import penran.zombies.ui.objects.Infection;
 import penran.zombies.ui.objects.TopBar;
 
-public final class Land extends BorderPane {
+public final class WorldMap extends BorderPane {
 
   private static final int FRAMES_PER_SECOND = 60;
 
@@ -50,7 +50,7 @@ public final class Land extends BorderPane {
 
   private final World world;
 
-  public Land(Level level, int width, int height, int marginWidth, int marginHeight) {
+  public WorldMap(Level level, int width, int height, int marginWidth, int marginHeight) {
     setId("world-map");
 
     // create the living objects

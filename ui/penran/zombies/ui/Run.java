@@ -26,7 +26,7 @@ public class Run extends Application {
     stage.show();
 
     // load game data and populate display
-    final Land land = new Land(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
+    final WorldMap land = new WorldMap(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
     layout.setCenter(land);
 
     // publish some technical information (mouse, fps...)

@@ -9,11 +9,8 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
-import javafx.animation.ScaleTransitionBuilder;
 import javafx.animation.Timeline;
-import javafx.animation.TimelineBuilder;
 import javafx.animation.TranslateTransition;
-import javafx.animation.TranslateTransitionBuilder;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -21,7 +18,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Polyline;
@@ -137,14 +133,17 @@ public final class Land extends BorderPane {
       // compute the new zoom
       // (constant increment for a mouse wheel step)
       final double zoom = 0.01 * event.getDeltaY();
-      ScaleTransition scale = ScaleTransitionBuilder.create().duration(new Duration(1000)).byX(zoom).byY(zoom).build();
+      ScaleTransition scale = new ScaleTransition(new Duration(1000));
+      scale.setByX(zoom);
+      scale.setByY(zoom);
 
       // move the center to the new zoomed place
       // (compute different between old group center and mouse pointer)
       final double moveX = (bounds.getMaxX() + bounds.getMinX()) / 2 - event.getSceneX();
       final double moveY = (bounds.getMaxY() + bounds.getMinY()) / 2 - event.getSceneY();
-      TranslateTransition translation = TranslateTransitionBuilder.create().duration(new Duration(1000)).node(items)
-          .byX(moveX).byY(moveY).build();
+      TranslateTransition translation = new TranslateTransition(new Duration(1000), items);
+      translation.setByX(moveX);
+      translation.setByY(moveY);
 
       new ParallelTransition(items, scale, translation).play();
     }
@@ -168,7 +167,9 @@ public final class Land extends BorderPane {
     }); // oneFrame
 
     // creates the game world's game loop (Timeline)
-    return TimelineBuilder.create().cycleCount(Animation.INDEFINITE).keyFrames(oneFrame).build();
+    Timeline timeline = new Timeline(oneFrame);
+    timeline.setCycleCount(Animation.INDEFINITE);
+    return timeline;
   }
 
   public Coordinates getCoordinates(double x, double y) {

@@ -2,17 +2,14 @@ package penran.zombies.ui;
 
 import java.io.File;
 
-import penran.zombies.core.Coordinates;
-
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import penran.zombies.core.Coordinates;
 
 public class Run extends Application {
   public static void main(String[] args) {

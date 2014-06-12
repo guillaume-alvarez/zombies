@@ -39,7 +39,7 @@ public class Run extends Application {
       @Override
       public void handle(MouseEvent event) {
         Coordinates c = land.getCoordinates(event.getSceneX(), event.getSceneY());
-        tech.setText("Longitude: " + c.longitude + ", latitude: " + c.latitude);
+        tech.setText("Longitude: " + (int) c.longitude + ", latitude: " + (int) c.latitude);
       }
     });
     layout.setBottom(tech);

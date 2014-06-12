@@ -51,7 +51,7 @@ public final class Land extends BorderPane {
   private final World world;
 
   public Land(Level level, int width, int height, int marginWidth, int marginHeight) {
-    setStyle("-fx-background-color: black");
+    setId("world-map");
 
     // create the living objects
     Map<String, Place> places = new HashMap<>();

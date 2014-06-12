@@ -1,3 +1,7 @@
+#world-map {
+  -fx-background-color:black;
+}
+
 #portrait-medic {
   -fx-text-fill:black;
   -fx-font-family:"arial";

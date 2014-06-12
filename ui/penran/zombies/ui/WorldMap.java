@@ -17,6 +17,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -103,8 +104,8 @@ public final class WorldMap extends BorderPane {
     items.setTranslateY(-items.getBoundsInParent().getMinY() + ui.getGraphicalNode().getHeight() + marginWidth / 2d
         - items.getTranslateY());
 
-    setOnScroll(new ZoomHandler(bounds));
-    // TODO should also be possible to drag'n drop to move the view
+    new ZoomHandler(bounds);
+    new DragHandler();
 
     VBox characters = update(new Characters(world)).getGraphicalNode();
 
@@ -122,10 +123,12 @@ public final class WorldMap extends BorderPane {
 
   /** Zoom on mouse wheel and translate image center to mouse cursor. */
   private final class ZoomHandler implements EventHandler<ScrollEvent> {
+
     private final Bounds bounds;
 
     private ZoomHandler(Bounds bounds) {
       this.bounds = bounds;
+      WorldMap.this.setOnScroll(this);
     }
 
     @Override
@@ -137,15 +140,59 @@ public final class WorldMap extends BorderPane {
       scale.setByX(zoom);
       scale.setByY(zoom);
 
-      // move the center to the new zoomed place
-      // (compute different between old group center and mouse pointer)
-      final double moveX = (bounds.getMaxX() + bounds.getMinX()) / 2 - event.getSceneX();
-      final double moveY = (bounds.getMaxY() + bounds.getMinY()) / 2 - event.getSceneY();
+      // move the center to the new zoomed place:
+      // - convert mouse coordinates to map coordinates
+      Point2D target = items.sceneToLocal(event.getSceneX(), event.getSceneY());
+      // - compute different between old group center and mouse pointer
+      double moveX = (bounds.getMaxX() + bounds.getMinX()) / 2. - target.getX();
+      double moveY = (bounds.getMaxY() + bounds.getMinY()) / 2. - target.getY();
+      // - create the corresponding translation
       TranslateTransition translation = new TranslateTransition(new Duration(1000), items);
       translation.setByX(moveX);
       translation.setByY(moveY);
 
       new ParallelTransition(items, scale, translation).play();
+    }
+  }
+
+  /** Slowly translate image center to mouse cursor. */
+  private final class DragHandler {
+
+    private double origSceneX;
+
+    private double origSceneY;
+
+    private double origTranslateX;
+
+    private double origTranslateY;
+
+    public DragHandler() {
+      WorldMap.this.setOnMousePressed(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+          mousePressed(event);
+        }
+      });
+      WorldMap.this.setOnMouseDragged(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+          mouseDragged(event);
+        }
+      });
+    }
+
+    private void mousePressed(MouseEvent event) {
+      origSceneX = event.getSceneX();
+      origSceneY = event.getSceneY();
+      origTranslateX = items.getTranslateX();
+      origTranslateY = items.getTranslateY();
+    }
+
+    private void mouseDragged(MouseEvent event) {
+      double offsetX = event.getSceneX() - origSceneX;
+      double offsetY = event.getSceneY() - origSceneY;
+      items.setTranslateX(origTranslateX + offsetX);
+      items.setTranslateY(origTranslateY + offsetY);
     }
   }
 

@@ -22,7 +22,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import penran.utils.Util;
-import penran.zombies.ui.Land;
+import penran.zombies.ui.WorldMap;
 import penran.zombies.ui.Level;
 import penran.zombies.ui.Level.Road;
 
@@ -130,7 +130,7 @@ public class LevelEditor implements Initializable {
   }
 
   private void loadLevel(Level level) {
-    Land land = new Land(level, 800, 350, 20, 20);
+    WorldMap land = new WorldMap(level, 800, 350, 20, 20);
     land.setVisible(true);
     scene_actual.getChildren().clear();
     scene_actual.getChildren().add(land);

@@ -6,7 +6,6 @@ import java.util.Map;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import penran.zombies.core.Character;
 import penran.zombies.core.World;
 import penran.zombies.ui.Updateable;
@@ -48,8 +47,7 @@ public final class Characters implements Updateable {
 
   private static final class Portrait {
 
-    private static final Font FONT = Font.font("arial", 20);
-
+    @SuppressWarnings("unused")
     private final Character character;
 
     private final Button button;

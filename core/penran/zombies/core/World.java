@@ -15,6 +15,7 @@ public final class World {
 
   private final Map<String, Place> places;
 
+  @SuppressWarnings("unused")
   private final List<Link> links;
 
   /**
@@ -61,7 +62,7 @@ public final class World {
   }
 
   /** The tick is the time in ms between to game world updates. */
-  public void start(long tick) {
+  public void start(@SuppressWarnings("hiding") long tick) {
     this.tick = tick;
     this.started = true;
     thread.start();

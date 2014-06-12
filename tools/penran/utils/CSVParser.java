@@ -318,6 +318,7 @@ public class CSVParser {
 
   private static class DefaultConverter implements Converter {
 
+    @SuppressWarnings("unused")
     public DefaultConverter() {
       // exists to avoid problem because default ctor is private
     }

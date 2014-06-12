@@ -48,12 +48,12 @@ public final class Character {
   }
 
   /**
-   * Gives a mission to the character. Returns false if the character already
+   * Assigns a mission to the character. Returns false if the character already
    * has one.
    */
-  public boolean givesMission(Mission mission) {
+  public boolean assignMission(Mission newMission) {
     if (this.mission == null) {
-      this.mission = mission;
+      this.mission = newMission;
       return true;
     } else
       return false;

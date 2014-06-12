@@ -98,19 +98,6 @@ public class Util {
    * class MyClass {
    *   private static Logger l = logger(); // category of &quot;l&quot; is &quot;gv.commons.MyClass&quot;
    * };
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
-   * 
    * </pre>
    * 
    * @return A logger, corresponding to the class of the method calling this.

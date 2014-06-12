@@ -26,23 +26,23 @@ public class Run extends Application {
     stage.show();
 
     // load game data and populate display
-    final WorldMap land = new WorldMap(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
-    layout.setCenter(land);
+    final WorldMap map = new WorldMap(Level.load(new File("etc/level.test")), 800, 350, 20, 20);
+    layout.setCenter(map);
 
     // publish some technical information (mouse, fps...)
     final Label tech = new Label("unknown");
     // TODO please lambdas!!!
-    land.setOnMouseMoved(new EventHandler<MouseEvent>() {
+    map.setOnMouseMoved(new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
-        Coordinates c = land.getCoordinates(event.getSceneX(), event.getSceneY());
+        Coordinates c = map.getCoordinates(event.getSceneX(), event.getSceneY());
         tech.setText("Longitude: " + (int) c.longitude + ", latitude: " + (int) c.latitude);
       }
     });
     layout.setBottom(tech);
 
     // start game
-    land.beginGameLoop();
+    map.beginGameLoop();
 
   }
 

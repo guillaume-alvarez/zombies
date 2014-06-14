@@ -27,15 +27,6 @@ import penran.utils.Util;
  */
 public class Level {
 
-  public static class ToList implements penran.utils.CSVParser.Converter {
-    @Override
-    public Object convert(String column, Class<?> type, boolean required, String value) throws Exception {
-      if (value.isEmpty())
-        return Collections.emptyList();
-      return Arrays.asList(value.split("\\s+"));
-    }
-  }
-
   public static class Town {
     public final double latitude;
 

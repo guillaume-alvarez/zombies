@@ -15,6 +15,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -93,14 +94,14 @@ public final class WorldMap extends BorderPane {
     items = new Group(infection, roads, boundary, towns);
     items.setManaged(true);
 
-    new ZoomHandler();
-    new DragHandler();
-
     VBox characters = update(new Characters(world)).getGraphicalNode();
 
     setCenter(items);
     setTop(ui.getGraphicalNode());
     setRight(characters);
+
+    new ZoomHandler();
+    new DragHandler();
 
     loop = buildGameLoop();
   }
@@ -113,10 +114,7 @@ public final class WorldMap extends BorderPane {
   /** Zoom on mouse wheel and translate image center to mouse cursor. */
   private final class ZoomHandler implements EventHandler<ScrollEvent> {
 
-    private final Bounds bounds;
-
     private ZoomHandler() {
-      this.bounds = items.getBoundsInParent();
       WorldMap.this.setOnScroll(this);
     }
 
@@ -132,9 +130,15 @@ public final class WorldMap extends BorderPane {
       // move the center to the new zoomed place:
       // - convert mouse coordinates to map coordinates
       Point2D target = items.sceneToLocal(event.getSceneX(), event.getSceneY());
+      // - convert scene center to map coordinates (may be done at start?)
+      Scene scene = items.getScene();
+      Point2D origin = items.sceneToLocal(//
+          (scene.getX() + scene.getWidth()) / 2.,//
+          (scene.getY() + scene.getHeight()) / 2.);
       // - compute different between old group center and mouse pointer
-      double moveX = (bounds.getMaxX() + bounds.getMinX()) / 2. - target.getX();
-      double moveY = (bounds.getMaxY() + bounds.getMinY()) / 2. - target.getY();
+      System.out.println("pointer=" + target + ", origin=" + origin);
+      double moveX = origin.getX() - target.getX();
+      double moveY = origin.getY() - target.getY();
       // - create the corresponding translation
       TranslateTransition translation = new TranslateTransition(new Duration(1000), items);
       translation.setByX(moveX);

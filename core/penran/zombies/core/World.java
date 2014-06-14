@@ -28,18 +28,6 @@ public final class World {
 
   private final List<GameAgent> forNextTick = new ArrayList<>();
 
-  private final Thread thread;
-
-  private long tick;
-
-  private volatile boolean started = false;
-
-  /** Default speed is 1.0, 2.0 is two times faster, 0.0 is paused. */
-  private double speed = 1.0;
-
-  /** Pause synchronization. */
-  private final Object paused = new Object();
-
   public World(Map<String, Place> places, List<Link> links) {
     this.places = places;
     this.links = links;
@@ -47,25 +35,6 @@ public final class World {
     for (Place p : places.values())
       if (p.hasZombies())
         addAgent(new PlaceContamination(p));
-
-    thread = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          loop();
-        } catch (Exception e) {
-          if (started)
-            e.printStackTrace();
-        }
-      }
-    }, "Zombies");
-  }
-
-  /** The tick is the time in ms between to game world updates. */
-  public void start(@SuppressWarnings("hiding") long tick) {
-    this.tick = tick;
-    this.started = true;
-    thread.start();
   }
 
   public void addAgent(GameAgent ga) {
@@ -95,45 +64,7 @@ public final class World {
     characters.put(character.getName(), character);
   }
 
-  /** Default speed is 1.0, 2.0 is two times faster, 0.0 is paused. */
-  public void setSpeed(double speed) {
-    synchronized (paused) {
-      this.speed = Math.max(0.0, speed);
-      if (speed > 0.0)
-        paused.notifyAll();
-    }
-  }
-
-  public void stop() {
-    started = false;
-    synchronized (paused) {
-      paused.notifyAll();
-    }
-    try {
-      thread.join(10000);
-    }
-    catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private void loop() throws InterruptedException {
-    long lastExecution = System.currentTimeMillis();
-    while (started) {
-      // wait while paused
-      synchronized (paused) {
-        while (speed == 0.0)
-          paused.wait();
-      }
-      long nextTick = lastExecution + (long) (tick / speed);
-      waitTick(nextTick);
-      // finally execute the turn computation
-      lastExecution = System.currentTimeMillis();
-      runTurn();
-    }
-  }
-
-  private void runTurn() {
+  public void update() {
     synchronized (agents) {
       agents.addAll(forNextTick);
       forNextTick.clear();
@@ -141,18 +72,6 @@ public final class World {
         if (!it.next().tick(this))
           it.remove();
     }
-  }
-
-  private static void waitTick(long nextTick) {
-    long toWait = nextTick - System.currentTimeMillis();
-    if (toWait > 0) {
-      try {
-        Thread.sleep(toWait);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    } else
-      System.out.println("Late by " + (-toWait) + "ms.");
   }
 
 }

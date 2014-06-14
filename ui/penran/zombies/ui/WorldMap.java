@@ -27,6 +27,7 @@ import penran.zombies.core.Coordinates;
 import penran.zombies.core.Link;
 import penran.zombies.core.Place;
 import penran.zombies.core.World;
+import penran.zombies.core.WorldThread;
 import penran.zombies.ui.Level.Road;
 import penran.zombies.ui.Level.Town;
 import penran.zombies.ui.objects.Boundary;
@@ -182,7 +183,7 @@ public final class WorldMap extends BorderPane {
   /** Start all animations. */
   public void beginGameLoop() {
     loop.play();
-    world.start(1000 / TICKS_PER_SECOND);
+    new WorldThread(world).start(1000 / TICKS_PER_SECOND);
   }
 
   /** Builds and sets the game loop ready to be started. */

@@ -33,7 +33,6 @@ public class CSVParser {
    * Interface for factories of object built from the CSV file entry.
    *
    * @author gaetan
-   *
    * @param <T> The type of object built by the factory.
    */
   public interface EntryBuidler<T> {
@@ -67,7 +66,6 @@ public class CSVParser {
    * be used to fill in the parameter.
    *
    * @author gaetan
-   *
    */
   @Retention(RetentionPolicy.RUNTIME)
   public @interface Column {
@@ -124,8 +122,7 @@ public class CSVParser {
    * @return A list of objects built using factory.
    * @throws Exception Occurs if some conversion failed in input data.
    */
-  public static <T> List<T> list(EntryBuidler<T> factory, int separator,
-                                 Scanner scanner) throws Exception {
+  public static <T> List<T> list(EntryBuidler<T> factory, int separator, Scanner scanner) throws Exception {
     List<T> r = new ArrayList<>();
     Map<String, Integer> ids = parseColumns(separator, scanner.nextLine());
 
@@ -165,11 +162,9 @@ public class CSVParser {
 
       if (line.charAt(start) == '\'') {
         start = matchQuoted(line, entries, start, '\'');
-      }
-      else if (line.charAt(start) == '"') {
+      } else if (line.charAt(start) == '"') {
         start = matchQuoted(line, entries, start, '"');
-      }
-      else {
+      } else {
         int current = start;
         while (current < line.length() && line.codePointAt(current) != separator) {
           current++;
@@ -195,11 +190,10 @@ public class CSVParser {
     return entries;
   }
 
-  private static int matchQuoted(String line, List<String> entries, int start,
-                                 char quote) {
+  private static int matchQuoted(String line, List<String> entries, int start, char quote) {
     int current = start + 1;
     while (line.charAt(start) != quote && current < line.length()) {
-      current ++;
+      current++;
     }
     if (current == line.length()) {
       throw new IllegalArgumentException("Unclosed quote at " + start + " in line " + line);
@@ -211,14 +205,11 @@ public class CSVParser {
   }
 
   private static int skipWhitespaces(String line, int start) {
-    while (Character.isWhitespace(line.codePointAt(start))
-        && start < line.length()) {
+    while (Character.isWhitespace(line.codePointAt(start)) && start < line.length()) {
       start += Character.charCount(line.codePointAt(start));
     }
     return start;
   }
-
-
 
   /**
    * Create a builder using a static {@link Builder} method from provided class.
@@ -227,8 +218,7 @@ public class CSVParser {
     return builder(cls, null);
   }
 
-  private static <S, T> EntryBuidler<T> builder(Class<S> cls,
-                                                final Object instance) {
+  private static <S, T> EntryBuidler<T> builder(Class<S> cls, final Object instance) {
     final Method r = getFactory(cls);
 
     class Conv {
@@ -240,8 +230,7 @@ public class CSVParser {
 
       final Class<?> type;
 
-      private Conv(String name, Converter converter, boolean required,
-          Class<?> type) {
+      private Conv(String name, Converter converter, boolean required, Class<?> type) {
         this.name = name;
         this.converter = converter;
         this.required = required;
@@ -272,10 +261,8 @@ public class CSVParser {
 
       try {
         converters.add(new Conv(key, conv.newInstance(), required, types[i]));
-      }
-      catch (InstantiationException | IllegalAccessException e) {
-        throw new IllegalArgumentException("No no-args constructor in " + conv,
-                                           e);
+      } catch (InstantiationException | IllegalAccessException e) {
+        throw new IllegalArgumentException("No no-args constructor in " + conv, e);
       }
     }
     return new EntryBuidler<T>() {
@@ -285,14 +272,11 @@ public class CSVParser {
       public T build(Map<String, Integer> columns, String[] elements) throws Exception {
         for (int i = 0; i < converters.size(); i++) {
           Conv c = converters.get(i);
-          buf[i] = c.converter.convert(c.name, c.type, c.required,
-                                       elements[columns.get(c.name)]);
+          buf[i] = c.converter.convert(c.name, c.type, c.required, elements[columns.get(c.name)]);
         }
         try {
           return (T) r.invoke(instance, buf);
-        }
-        catch (IllegalAccessException | IllegalArgumentException
-            | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
           throw new RuntimeException(e);
         }
       }
@@ -327,7 +311,7 @@ public class CSVParser {
     public Object convert(String column, Class<?> type, boolean required, String value) {
       if (value.isEmpty()) {
         if (required)
-          throw new IllegalArgumentException("Empty column " + column );
+          throw new IllegalArgumentException("Empty column " + column);
         return null;
       }
       if (type == String.class) {
@@ -344,8 +328,7 @@ public class CSVParser {
       }
       if (type == Boolean.class || type == boolean.class) {
         String v = value.toLowerCase();
-        return v.equals("true") || v.equals("t") || v.equals("yes")
-            || v.equals("y");
+        return "true".equals(v) || "t".equals(v) || "yes".equals(v) || "y".equals(v);
       }
       throw new RuntimeException("Unhandled type " + type + " for " + column);
     }

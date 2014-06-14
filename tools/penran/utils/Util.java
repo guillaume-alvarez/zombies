@@ -170,12 +170,7 @@ public class Util {
 
   public static FilenameFilter getFileFilter(String regex) {
     final Pattern p = Pattern.compile(regex);
-    return new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        return p.matcher(name).find();
-      }
-    };
+    return (dir, name) -> p.matcher(name).find();
   }
 
   /**

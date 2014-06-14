@@ -1,8 +1,8 @@
 package penran.zombies.ui.objects;
 
+import static java.lang.Math.round;
+import static java.lang.String.format;
 import javafx.beans.property.StringProperty;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -35,15 +35,10 @@ public final class City implements Updateable {
   private Circle initTown(final Place p, final StringProperty selected) {
     // draw the city
     final double radius = p.size / 2d;
-    final int ift = (int) Math.round(255 * p.getZombies());
+    final int ift = (int) round(255 * p.getZombies());
     final Circle c = new Circle(p.coordinates.longitude, p.coordinates.latitude, radius, Color.rgb(255, ift, ift));
-    c.setOnMouseClicked(new EventHandler<Event>() {
-      @Override
-      public void handle(Event paramT) {
-        selected.setValue(String.format("Town %s infected=%s%% size=%s", p.name, Math.round(p.getZombies() * 100.0),
-            p.size));
-      }
-    });
+    c.setOnMouseClicked(paramT -> selected.setValue(//
+        format("Town %s infected=%s%% size=%s", p.name, round(p.getZombies() * 100.0), p.size)));
     return c;
   }
 

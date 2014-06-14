@@ -1,5 +1,6 @@
 package penran.zombies.ui.objects;
 
+import static java.lang.Math.round;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -49,6 +50,6 @@ public final class TopBar implements Updateable {
 
   @Override
   public void update() {
-    global.setText("Infection: " + Math.round(world.getContamination() * 100.0) + "%");
+    global.setText("Infection: " + round(world.getContamination() * 100.0) + "%");
   }
 }

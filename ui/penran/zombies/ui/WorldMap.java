@@ -11,7 +11,6 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -167,18 +166,8 @@ public final class WorldMap extends BorderPane {
     private double origTranslateY;
 
     public DragHandler() {
-      WorldMap.this.setOnMousePressed(new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-          mousePressed(event);
-        }
-      });
-      WorldMap.this.setOnMouseDragged(new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-          mouseDragged(event);
-        }
-      });
+      WorldMap.this.setOnMousePressed(event -> mousePressed(event));
+      WorldMap.this.setOnMouseDragged(event -> mouseDragged(event));
     }
 
     private void mousePressed(MouseEvent event) {
@@ -205,13 +194,7 @@ public final class WorldMap extends BorderPane {
   /** Builds and sets the game loop ready to be started. */
   private Timeline buildGameLoop() {
     final Duration oneFrameAmt = Duration.millis(1000 / (float) FRAMES_PER_SECOND);
-    final KeyFrame oneFrame = new KeyFrame(oneFrameAmt, new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        for (Updateable u : toUpdate)
-          u.update();
-      }
-    }); // oneFrame
+    final KeyFrame oneFrame = new KeyFrame(oneFrameAmt, event -> toUpdate.forEach(Updateable::update));
 
     // creates the game world's game loop (Timeline)
     Timeline timeline = new Timeline(oneFrame);

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -91,34 +90,29 @@ public class LevelEditor implements Initializable {
 
   @Override
   public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-    scene_close.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        System.out.println(event);
-        Util.die("TODO offers to save before quitting. Ah ah.");
-      }
-    });
-
-    scene_create.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        loadLevel(new Level(new ArrayList<Road>(), new ArrayList<Point2D>()));
-      }
-    });
-
-    scene_load.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent event) {
-        DirectoryChooser dc = new DirectoryChooser();
-        dc.setTitle("Choose level directory...");
-        dc.setInitialDirectory(new File("etc/"));
-        File dir = dc.showDialog(stage);
-        if (dir != null && dir.isDirectory())
-          loadFile(dir);
-      }
-    });
+    scene_close.setOnAction(event -> onSceneClose(event));
+    scene_create.setOnAction(event -> onSceneCreate());
+    scene_load.setOnAction(event -> onSceneLoad());
 
     loadFile(new File("etc/level.test2"));
+  }
+
+  private void onSceneClose(ActionEvent event) {
+    System.out.println(event);
+    Util.die("TODO offers to save before quitting. Ah ah.");
+  }
+
+  private void onSceneCreate() {
+    loadLevel(new Level(new ArrayList<Road>(), new ArrayList<Point2D>()));
+  }
+
+  private void onSceneLoad() {
+    DirectoryChooser dc = new DirectoryChooser();
+    dc.setTitle("Choose level directory...");
+    dc.setInitialDirectory(new File("etc/"));
+    File dir = dc.showDialog(stage);
+    if (dir != null && dir.isDirectory())
+      loadFile(dir);
   }
 
   private void loadFile(File file) {

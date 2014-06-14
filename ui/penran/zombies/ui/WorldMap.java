@@ -93,8 +93,7 @@ public final class WorldMap extends BorderPane {
     items = new Group(infection, roads, boundary, towns);
     items.setManaged(true);
 
-    final Bounds bounds = items.getBoundsInParent();
-    new ZoomHandler(bounds);
+    new ZoomHandler();
     new DragHandler();
 
     VBox characters = update(new Characters(world)).getGraphicalNode();
@@ -116,8 +115,8 @@ public final class WorldMap extends BorderPane {
 
     private final Bounds bounds;
 
-    private ZoomHandler(Bounds bounds) {
-      this.bounds = bounds;
+    private ZoomHandler() {
+      this.bounds = items.getBoundsInParent();
       WorldMap.this.setOnScroll(this);
     }
 

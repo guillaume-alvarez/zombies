@@ -183,13 +183,18 @@ public final class WorldMap extends BorderPane {
   /** Start all animations. */
   public void beginGameLoop() {
     loop.play();
-    new WorldThread(world).start(1000 / TICKS_PER_SECOND);
+  }
+
+  private void updateGame() {
+    world.update();
+    for (Updateable up : toUpdate)
+      up.update();
   }
 
   /** Builds and sets the game loop ready to be started. */
   private Timeline buildGameLoop() {
     final Duration oneFrameAmt = Duration.millis(1000 / (float) FRAMES_PER_SECOND);
-    final KeyFrame oneFrame = new KeyFrame(oneFrameAmt, event -> toUpdate.forEach(Updateable::update));
+    final KeyFrame oneFrame = new KeyFrame(oneFrameAmt, event -> updateGame());
 
     // creates the game world's game loop (Timeline)
     Timeline timeline = new Timeline(oneFrame);

@@ -111,7 +111,8 @@ public final class World {
     }
     try {
       thread.join(10000);
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       e.printStackTrace();
     }
   }

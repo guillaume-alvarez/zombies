@@ -91,18 +91,9 @@ public final class WorldMap extends BorderPane {
     // city halos and roads should always be visible over infection
     Polyline boundary = new Boundary(level.background).getGraphicalNode();
     items = new Group(infection, roads, boundary, towns);
-    items.setManaged(false);
+    items.setManaged(true);
 
     final Bounds bounds = items.getBoundsInParent();
-    final double zoom = Math.min((width - marginWidth) / bounds.getWidth(), (height - marginHeight - ui
-        .getGraphicalNode().getHeight()) / bounds.getHeight());
-
-    items.setScaleX(zoom);
-    items.setScaleY(zoom);
-    items.setTranslateX(-items.getBoundsInParent().getMinX() + marginWidth / 2d - items.getTranslateX());
-    items.setTranslateY(-items.getBoundsInParent().getMinY() + ui.getGraphicalNode().getHeight() + marginWidth / 2d
-        - items.getTranslateY());
-
     new ZoomHandler(bounds);
     new DragHandler();
 

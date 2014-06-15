@@ -118,6 +118,8 @@ public final class WorldMap extends BorderPane {
   /** Zoom on mouse wheel and translate image center to mouse cursor. */
   private final class ZoomHandler implements EventHandler<ScrollEvent> {
 
+    private static final int TIME = 300;
+
     private ZoomHandler() {
       WorldMap.this.setOnScroll(this);
     }
@@ -127,7 +129,7 @@ public final class WorldMap extends BorderPane {
       // compute the new zoom
       // (constant increment for a mouse wheel step)
       final double zoom = 0.01 * event.getDeltaY();
-      ScaleTransition scale = new ScaleTransition(new Duration(1000));
+      ScaleTransition scale = new ScaleTransition(new Duration(TIME));
       scale.setByX(zoom);
       scale.setByY(zoom);
 
@@ -140,11 +142,10 @@ public final class WorldMap extends BorderPane {
           (scene.getX() + scene.getWidth()) / 2.,//
           (scene.getY() + scene.getHeight()) / 2.);
       // - compute different between old group center and mouse pointer
-      System.out.println("pointer=" + target + ", origin=" + origin);
       double moveX = origin.getX() - target.getX();
       double moveY = origin.getY() - target.getY();
       // - create the corresponding translation
-      TranslateTransition translation = new TranslateTransition(new Duration(1000), items);
+      TranslateTransition translation = new TranslateTransition(new Duration(TIME), items);
       translation.setByX(moveX);
       translation.setByY(moveY);
 

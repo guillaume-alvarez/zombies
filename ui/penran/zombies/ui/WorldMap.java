@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.animation.Animation;
+import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -17,6 +18,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.effect.BoxBlur;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
@@ -180,9 +183,26 @@ public final class WorldMap extends BorderPane {
     }
   }
 
+  private final class PauseHandler {
+    public PauseHandler(Scene scene) {
+      scene.setOnKeyPressed(event -> keyPressed(event));
+    }
+
+    private void keyPressed(KeyEvent event) {
+      if (event.getCode() == KeyCode.PAUSE) {
+        if (loop.getStatus() == Status.RUNNING)
+          loop.pause();
+        else
+          loop.play();
+      }
+    }
+  }
+
   /** Start all animations. */
   public void beginGameLoop() {
     loop.play();
+
+    new PauseHandler(getScene());
   }
 
   private void updateGame() {
